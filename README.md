@@ -10,11 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe"><img src="https://img.shields.io/badge/Download-Windows%20installer%20(64--bit)-0B5C9E?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows"></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/omerozgul11/ql-refract-studio/releases/latest">Release notes and checksums</a> ·
+  <b>Download for Windows (64-bit):</b> <a href="https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe">RefractionStudio-Setup-win-x64.exe</a><br>
+  <a href="https://github.com/omerozgul11/ql-refract-studio/releases">All releases and checksums</a> ·
   <a href="docs/user-guide/USER-GUIDE.md">User guide</a> ·
   <a href="docs/SCIENTIFIC-VALIDATION.md">Scientific validation</a> ·
   <a href="mailto:support@quakelogic.net">Support</a>
@@ -24,9 +21,17 @@
   <img src="docs/images/velocity-model.png" width="900" alt="Velocity model page: travel-time curves with layer assignment and the layered model">
 </p>
 
----
+## Contents
 
-## Why Refraction Studio
+* [Overview](#overview)
+* [Download and installation](#download-and-installation)
+* [Screenshots](#screenshots)
+* [Features](#features)
+* [Documentation](#documentation)
+* [For developers](#for-developers)
+* [Licence](#licence)
+
+## Overview
 
 Refraction Studio, by QuakeLogic Inc., takes a seismic refraction survey through the whole workflow in
 one application: import SEG-2 or SEG-Y shot records, check the geometry, process and pick first
@@ -42,6 +47,38 @@ parameters, review automatic quality checks and produce a branded PDF report.
   below the depth of investigation, extrapolated Vs30 and estimated densities are always labelled.
 * **Built for P and SH.** Separate lines, SH left/right impact pairs combined automatically, and an
   SH polarity-divergence picker.
+
+## Download and installation
+
+1. Download the installer: **[RefractionStudio-Setup-win-x64.exe](https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe)**
+   (all versions and SHA-256 checksums are on the [releases page](https://github.com/omerozgul11/ql-refract-studio/releases)).
+2. Run it and follow the steps. You can install for all users or only for yourself, add a desktop
+   shortcut and open `.rfsx` projects with Refraction Studio.
+3. Start Refraction Studio and choose **Start 14-day trial** or activate your licence key. Then try
+   **Explore the sample** on the start page — a complete synthetic P and SH survey.
+
+### System requirements
+
+| | |
+|---|---|
+| Operating system | Windows 10 (version 1809 or later) or Windows 11, 64-bit |
+| Disk space | about 250 MB |
+| Screen | at least 1024 × 660 |
+| Other software | none — the .NET runtime is included |
+
+### Licensing
+
+* 14-day trial with all features.
+* Licences are activated per computer and work offline between periodic checks.
+* If a licence lapses, projects still open, display and export; only editing is disabled.
+* Uninstalling keeps your projects, settings and licence.
+
+### Current release (1.0.0)
+
+* The installer is not code-signed yet, so Windows SmartScreen may show "Windows protected your PC".
+  Check the SHA-256 checksum on the releases page, then choose *More info → Run anyway*.
+* Online trial start and activation need the QuakeLogic licence service; contact
+  [support@quakelogic.net](mailto:support@quakelogic.net) if activation does not succeed.
 
 ## Screenshots
 
@@ -81,36 +118,12 @@ profiles, Vs30, engineering parameters, QC, warnings and appendices, with your c
 * **Projects:** one `.rfsx` file, autosave and crash recovery, snapshots and alternative
   interpretation scenarios.
 
-## Download and install
-
-1. Download the installer: **[RefractionStudio-Setup-win-x64.exe](https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe)**
-   (all versions and SHA-256 checksums are on the [releases page](https://github.com/omerozgul11/ql-refract-studio/releases)).
-2. Run it and follow the steps. You can install for all users or only for yourself, add a desktop
-   shortcut and open `.rfsx` projects with Refraction Studio.
-3. Start Refraction Studio and choose **Start 14-day trial** or activate your licence key. Then try
-   **Explore the sample** on the start page — a complete synthetic P and SH survey.
-
-**System requirements:** Windows 10 (version 1809 or later) or Windows 11, 64-bit; about 250 MB of
-disk space; a screen of at least 1024 × 660. No other software is needed (the .NET runtime is
-included).
-
-**Licensing:** a 14-day trial with all features; licences are activated per computer and work offline
-between periodic checks. If a licence lapses, projects still open, display and export — only editing
-is disabled. Uninstalling keeps your projects, settings and licence.
-
-> **Current release (1.0.0):** the installer is not code-signed yet, so Windows SmartScreen may show
-> "Windows protected your PC" — choose *More info → Run anyway* after checking the SHA-256 checksum on
-> the releases page. Online trial start and activation need the QuakeLogic licence service; contact
-> [support@quakelogic.net](mailto:support@quakelogic.net) if activation does not succeed.
-
 ## Documentation
 
 * [User guide](docs/user-guide/USER-GUIDE.md) — the same guide is built into the application (F1).
 * [Scientific validation](docs/SCIENTIFIC-VALIDATION.md) — synthetic cases with known answers and the latest results.
 * [Algorithms](docs/algorithms/) — processing, picking, layer assignment, layered methods, tomography, QC, engineering.
 * [Reports and exports](docs/REPORTING.md) · [File formats](docs/file-formats/) · [Security](docs/SECURITY.md)
-
----
 
 ## For developers
 
@@ -184,7 +197,7 @@ In the application, "Explore the sample" on the start page opens a copy of it.
 
 Editing requires a licence or a trial; without one, projects open read-only.
 
-### Documentation index
+### Full documentation index
 
 | Document | Contents |
 |---|---|
