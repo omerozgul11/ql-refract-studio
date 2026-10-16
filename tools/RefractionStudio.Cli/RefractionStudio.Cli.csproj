@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>RefractionStudio.Cli</RootNamespace>
+    <AssemblyName>refraction-studio-cli</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/RefractionStudio.Reporting/RefractionStudio.Reporting.csproj" />
+    <ProjectReference Include="../../src/RefractionStudio.Synthetics/RefractionStudio.Synthetics.csproj" />
+    <ProjectReference Include="../../src/RefractionStudio.Licensing/RefractionStudio.Licensing.csproj" />
+  </ItemGroup>
+</Project>

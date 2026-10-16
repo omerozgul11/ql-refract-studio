@@ -1,0 +1,167 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:v="using:RefractionStudio.App.Views"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             x:Class="RefractionStudio.App.Views.ProcessingPageView"
+             x:DataType="vm:ProcessingPageViewModel">
+  <TabControl Classes="page">
+    <!-- ───────────── Pipeline ───────────── -->
+    <TabItem Header="Processing pipeline">
+      <Grid ColumnDefinitions="370,14,*">
+        <ScrollViewer>
+          <StackPanel>
+            <Border Classes="section">
+              <StackPanel>
+                <TextBlock Text="Steps (applied top to bottom)" Classes="h3" Margin="0,0,0,4" />
+                <TextBlock Text="No processing: the original traces are used." Classes="muted" IsVisible="{Binding !Steps.Count}" />
+                <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}" Background="Transparent" MaxHeight="300">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:StepRow">
+                      <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                        <TextBlock Text="{Binding Number}" Classes="caption" VerticalAlignment="Center" Width="18" />
+                        <CheckBox IsChecked="{Binding Enabled, Mode=OneWay}" ToolTip.Tip="Enable or disable this step" MinWidth="0" Margin="0,0,4,0"
+                                  Command="{Binding $parent[UserControl].((vm:ProcessingPageViewModel)DataContext).ToggleStepCommand}" CommandParameter="{Binding}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="2">
+                          <Button Classes="tool" MinWidth="0" Padding="4" ToolTip.Tip="Move up"
+                                  Command="{Binding $parent[UserControl].((vm:ProcessingPageViewModel)DataContext).MoveUpCommand}" CommandParameter="{Binding}">
+                            <PathIcon Data="{StaticResource Icon.Up}" Width="11" Height="11" />
+                          </Button>
+                          <Button Classes="tool" MinWidth="0" Padding="4" ToolTip.Tip="Move down"
+                                  Command="{Binding $parent[UserControl].((vm:ProcessingPageViewModel)DataContext).MoveDownCommand}" CommandParameter="{Binding}">
+                            <PathIcon Data="{StaticResource Icon.Down}" Width="11" Height="11" />
+                          </Button>
+                          <Button Classes="tool" MinWidth="0" Padding="4" ToolTip.Tip="Remove"
+                                  Command="{Binding $parent[UserControl].((vm:ProcessingPageViewModel)DataContext).RemoveStepCommand}" CommandParameter="{Binding}">
+                            <PathIcon Data="{StaticResource Icon.Delete}" Width="11" Height="11" />
+                          </Button>
+                        </StackPanel>
+                      </Grid>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                  <ComboBox ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:StepTemplate">
+                        <TextBlock Text="{Binding Name}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                  <Button Grid.Column="1" Classes="secondary" Command="{Binding AddStepCommand}" Margin="6,0,0,4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <PathIcon Data="{StaticResource Icon.Plus}" Width="11" Height="11" />
+                      <TextBlock Text="Add" />
+                    </StackPanel>
+                  </Button>
+                </Grid>
+                <TextBlock Text="{Binding StepHelp}" Classes="caption" />
+                <Button Classes="link" Content="Copy this pipeline to all other lines…" Command="{Binding CopyPipelineToAllLinesCommand}" Margin="0,8,0,0" FontSize="12" />
+              </StackPanel>
+            </Border>
+
+            <Border Classes="section" IsVisible="{Binding SelectedStep, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <StackPanel>
+                <TextBlock Text="{Binding SelectedStep.Name, FallbackValue=''}" Classes="h3" Margin="0,0,0,4" />
+                <TextBlock Text="This step has no parameters." Classes="muted" IsVisible="{Binding !Parameters.Count}" />
+                <ItemsControl ItemsSource="{Binding Parameters}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:StepParameter">
+                      <StackPanel>
+                        <TextBlock Text="{Binding Label}" Classes="label" />
+                        <Grid ColumnDefinitions="*,Auto">
+                          <TextBox Text="{Binding Value}" ToolTip.Tip="{Binding Tip}" />
+                          <TextBlock Grid.Column="1" Text="{Binding Unit}" Classes="muted" VerticalAlignment="Center" Margin="6,0,0,4" MinWidth="30" />
+                        </Grid>
+                        <TextBlock Text="{Binding Tip}" Classes="caption" IsVisible="{Binding Tip, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Classes="primary" Content="Apply" Command="{Binding ApplyParametersCommand}" Margin="0,8,0,0" IsVisible="{Binding !!Parameters.Count}" />
+              </StackPanel>
+            </Border>
+
+            <Border Classes="section" IsVisible="{Binding !!Advice.Count}">
+              <StackPanel>
+                <TextBlock Text="Advice" Classes="h3" Margin="0,0,0,4" />
+                <ItemsControl ItemsSource="{Binding Advice}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                      <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,2" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Column="2" RowDefinitions="*,Auto,190">
+          <v:GatherViewerView DataContext="{Binding Viewer}" />
+          <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,6,0,4">
+            <TextBlock Text="{Binding SuggestedBand}" Classes="caption" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Classes="secondary" Content="Add suggested band-pass" Command="{Binding UseSuggestedBandCommand}"
+                    IsVisible="{Binding SuggestedBand, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    ToolTip.Tip="Adds a zero-phase band-pass with the suggested corners. Check the first breaks afterwards: zero-phase filters can produce precursors." />
+          </Grid>
+          <Border Grid.Row="2" Classes="panel" ClipToBounds="True">
+            <c:PlotView Plot="{Binding Spectrum}" />
+          </Border>
+        </Grid>
+      </Grid>
+    </TabItem>
+
+    <!-- ───────────── Shot time ───────────── -->
+    <TabItem Header="Shot time (trigger) correction">
+      <Grid ColumnDefinitions="340,14,*">
+        <Border Classes="section" VerticalAlignment="Top">
+          <StackPanel>
+            <TextBlock Text="Method" Classes="h3" Margin="0,0,0,4" />
+            <ComboBox ItemsSource="{Binding ShotTimeMethods}" SelectedItem="{Binding ShotTimeMethod}" HorizontalAlignment="Stretch" />
+            <TextBlock Classes="caption" TextWrapping="Wrap"
+                       Text="ReferenceGeophone: the onset on a geophone at the shot (role “Reference” in Geometry) defines time zero. Manual: enter a correction per shot. Corrections are subtracted from all picks of the shot." />
+            <TextBlock Text="Velocity between shot and reference geophone (m/s)" Classes="label" />
+            <TextBox Text="{Binding ReferenceVelocity}" PlaceholderText="Optional" />
+            <TextBlock Classes="caption" TextWrapping="Wrap"
+                       Text="Used only when the reference channel has an x position set in Geometry: the travel time from the shot to it is then allowed for. Otherwise the reference geophone is taken to be at the shot (0 ms)." />
+            <Button Classes="secondary" Content="Apply" Command="{Binding ApplyShotTimeSettingsCommand}" />
+            <Button Classes="primary" Content="Pick reference onsets automatically" Command="{Binding AutoPickReferencesCommand}" Margin="0,12,0,0"
+                    ToolTip.Tip="Picks the onset on the raw (unfiltered) reference trace of every shot" />
+          </StackPanel>
+        </Border>
+        <DataGrid Grid.Column="2" ItemsSource="{Binding ShotTimes}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserSortColumns="False"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <DataGrid.Columns>
+            <DataGridTextColumn x:DataType="vm:ShotTimeRow" Header="Shot" Binding="{Binding Label}" IsReadOnly="True" Width="Auto" />
+            <DataGridTextColumn x:DataType="vm:ShotTimeRow" Header="Reference pick" Binding="{Binding ReferencePick}" IsReadOnly="True" Width="*" />
+            <DataGridTemplateColumn Header="Reference time (ms)" Width="140">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:ShotTimeRow">
+                  <TextBox Text="{Binding ReferenceMs}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="Manual correction (ms)" Width="150">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:ShotTimeRow">
+                  <TextBox Text="{Binding Manual}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn x:DataType="vm:ShotTimeRow" Header="Applied correction" Binding="{Binding Correction}" IsReadOnly="True" Width="*" />
+            <DataGridTemplateColumn Header="" Width="Auto">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:ShotTimeRow">
+                  <Button Classes="link" Content="Apply" FontSize="12" Margin="8,0"
+                          Command="{Binding $parent[UserControl].((vm:ProcessingPageViewModel)DataContext).ApplyShotTimeRowCommand}" CommandParameter="{Binding}" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+    </TabItem>
+  </TabControl>
+</UserControl>

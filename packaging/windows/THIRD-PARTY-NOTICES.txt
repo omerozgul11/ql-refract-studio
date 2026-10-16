@@ -1,0 +1,77 @@
+REFRACTION STUDIO — THIRD-PARTY NOTICES
+
+Refraction Studio includes the open-source components listed below. Each component is the property of
+its authors and is distributed under its own licence. The packaging script checks that every bundled
+package appears in this file.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Component                                         Licence            Source
+────────────────────────────────────────────────────────────────────────────────────────────────────
+.NET runtime and libraries (self-contained)        MIT                https://github.com/dotnet/runtime
+Avalonia                                           MIT                https://github.com/AvaloniaUI/Avalonia
+  Avalonia.Controls.DataGrid, Avalonia.Desktop, Avalonia.Fonts.Inter (package), Avalonia.FreeDesktop,
+  Avalonia.FreeDesktop.AtSpi, Avalonia.HarfBuzz, Avalonia.Native, Avalonia.Remote.Protocol,
+  Avalonia.Skia, Avalonia.Themes.Fluent, Avalonia.Win32, Avalonia.X11
+Avalonia.Angle.Windows.Natives (ANGLE)             BSD-3-Clause       https://chromium.googlesource.com/angle/angle
+Inter typeface (in Avalonia.Fonts.Inter)           SIL OFL 1.1        https://github.com/rsms/inter
+MicroCom.Runtime                                   MIT                https://github.com/kekekeks/MicroCom
+Tmds.DBus.Protocol                                 MIT                https://github.com/tmds/Tmds.DBus
+SkiaSharp, SkiaSharp.NativeAssets.Win32            MIT                https://github.com/mono/SkiaSharp
+  Skia graphics library                            BSD-3-Clause       https://skia.org
+HarfBuzzSharp, HarfBuzzSharp.NativeAssets.Win32    MIT                https://github.com/mono/SkiaSharp
+  HarfBuzz text shaping library                    MIT ("Old MIT")    https://github.com/harfbuzz/harfbuzz
+CommunityToolkit.Mvvm                              MIT                https://github.com/CommunityToolkit/dotnet
+Microsoft.Data.Sqlite, Microsoft.Data.Sqlite.Core  MIT                https://github.com/dotnet/efcore
+Microsoft.Extensions.Configuration,                MIT                https://github.com/dotnet/runtime
+  Microsoft.Extensions.Configuration.Abstractions, Microsoft.Extensions.Configuration.Binder,
+  Microsoft.Extensions.DependencyInjection, Microsoft.Extensions.DependencyInjection.Abstractions,
+  Microsoft.Extensions.Diagnostics, Microsoft.Extensions.Diagnostics.Abstractions,
+  Microsoft.Extensions.Http, Microsoft.Extensions.Logging, Microsoft.Extensions.Logging.Abstractions,
+  Microsoft.Extensions.Options, Microsoft.Extensions.Options.ConfigurationExtensions,
+  Microsoft.Extensions.Primitives
+SQLitePCLRaw.core, SQLitePCLRaw.bundle_e_sqlite3,  Apache-2.0         https://github.com/ericsink/SQLitePCL.raw
+  SQLitePCLRaw.lib.e_sqlite3, SQLitePCLRaw.provider.e_sqlite3
+  SQLite                                           Public domain      https://sqlite.org/copyright.html
+Serilog, Serilog.Extensions.Logging,               Apache-2.0         https://github.com/serilog/serilog
+  Serilog.Formatting.Compact, Serilog.Sinks.File
+────────────────────────────────────────────────────────────────────────────────────────────────────
+
+MIT LICENCE (applies to the components marked MIT; the copyright holders are named in each project)
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+  associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or substantial
+  portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+  NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+BSD 3-CLAUSE LICENCE (ANGLE, Skia)
+
+  Redistribution and use in source and binary forms, with or without modification, are permitted
+  provided that the following conditions are met: (1) redistributions of source code must retain the
+  copyright notice, this list of conditions and the following disclaimer; (2) redistributions in binary
+  form must reproduce the copyright notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution; (3) neither the name of the
+  copyright holder nor the names of its contributors may be used to endorse or promote products derived
+  from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE
+  COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED.
+
+APACHE LICENSE 2.0 (SQLitePCLRaw, Serilog)
+
+  Licensed under the Apache License, Version 2.0. You may obtain a copy of the License at
+  https://www.apache.org/licenses/LICENSE-2.0. Unless required by applicable law or agreed to in
+  writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+SIL OPEN FONT LICENSE 1.1 (Inter)
+
+  The Inter typeface is licensed under the SIL Open Font License, Version 1.1
+  (https://openfontlicense.org). It is bundled unmodified and is not sold by itself.

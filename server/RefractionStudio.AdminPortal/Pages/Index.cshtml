@@ -1,0 +1,64 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h1>Dashboard</h1>
+<div class="stats">
+    <div class="stat"><div class="value">@Model.ActiveLicenses</div><div class="label">Active licences</div></div>
+    <div class="stat"><div class="value">@Model.SeatsInUse</div><div class="label">Computers activated</div></div>
+    <div class="stat"><div class="value">@Model.ActivationsLast30Days</div><div class="label">Activations, last 30 days</div></div>
+    <div class="stat"><div class="value">@Model.ActiveTrials</div><div class="label">Active trials</div></div>
+    <div class="stat"><div class="value">@Model.TrialsExpiringSoon</div><div class="label">Trials ending ≤ 3 days</div></div>
+    <div class="stat"><div class="value">@Model.LicensesExpiringSoon</div><div class="label">Licences ending ≤ 30 days</div></div>
+    <div class="stat"><div class="value">@Model.PendingEmails</div><div class="label">E-mails queued</div></div>
+    <div class="stat"><div class="value">@Model.FailedEmails</div><div class="label">E-mails failed</div></div>
+</div>
+
+<div class="grid">
+    <section>
+        <h2>Trials ending soon</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Computer</th><th>Started</th><th>Ends</th></tr></thead>
+                <tbody>
+                @foreach (var t in Model.ExpiringTrials)
+                {
+                    <tr>
+                        <td>@(t.MachineName ?? "—") <span class="mono muted">@Fmt.Hash(t.Fingerprint)</span></td>
+                        <td>@Fmt.Date(t.StartedAt)</td>
+                        <td><span class="badge expiring">@Fmt.Time(t.EndsAt)</span></td>
+                    </tr>
+                }
+                @if (Model.ExpiringTrials.Count == 0)
+                {
+                    <tr><td colspan="3" class="muted">No trials end in the next 3 days.</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section>
+        <h2>Recent events</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>When</th><th>Event</th><th>Subject</th><th>By</th></tr></thead>
+                <tbody>
+                @foreach (var e in Model.RecentEvents)
+                {
+                    <tr>
+                        <td class="small">@Fmt.Time(e.OccurredAt)</td>
+                        <td>@e.Type</td>
+                        <td>
+                            @if (e.LicenseId is { } lid) { <a asp-page="/Licenses/Details" asp-route-id="@lid">licence @Fmt.Short(lid)</a> }
+                            else if (e.TrialId is { } tid) { <span>trial @Fmt.Short(tid)</span> }
+                            else if (e.DeviceId is { } did) { <a asp-page="/Devices/Details" asp-route-id="@did">device @Fmt.Short(did)</a> }
+                        </td>
+                        <td class="small">@e.Actor</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

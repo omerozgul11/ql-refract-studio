@@ -1,0 +1,53 @@
+@{
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var path = Context.Request.Path.Value ?? "/";
+    string Active(string prefix) => (prefix == "/" ? path == "/" : path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@(ViewData["Title"] is string t ? t + " · " : "")Refraction Studio Licensing</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">Refraction Studio <span>Licensing admin</span></div>
+    @if (signedIn)
+    {
+        <nav class="mainnav">
+            <a class="@Active("/")" href="/">Dashboard</a>
+            <a class="@Active("/Customers")" asp-page="/Customers/Index">Customers</a>
+            <a class="@Active("/Licenses")" asp-page="/Licenses/Index">Licences</a>
+            <a class="@Active("/Activations")" asp-page="/Activations/Index">Activations</a>
+            <a class="@Active("/Devices")" asp-page="/Devices/Index">Devices</a>
+            <a class="@Active("/Trials")" asp-page="/Trials/Index">Trials</a>
+            <a class="@Active("/Releases")" asp-page="/Releases/Index">Releases</a>
+            <a class="@Active("/Audit")" asp-page="/Audit/Index">Audit log</a>
+            @if (User.IsInRole(AdminRoles.Administrator))
+            {
+                <a class="@Active("/Admins")" asp-page="/Admins/Index">Admin users</a>
+            }
+        </nav>
+        <div class="account">
+            <a asp-page="/Account/ChangePassword">@User.Identity!.Name</a>
+            <form method="post" asp-page="/Account/Logout" class="inline"><button type="submit" class="link">Sign out</button></form>
+        </div>
+    }
+</header>
+<main class="content">
+    @if (TempData.Peek("StatusMessage") is string ok)
+    {
+        <div class="flash ok" role="status">@ok</div>
+    }
+    @if (TempData.Peek("ErrorMessage") is string err)
+    {
+        <div class="flash error" role="alert">@err</div>
+    }
+    @RenderBody()
+</main>
+<footer class="footer">QuakeLogic Inc. · internal use only · all times UTC</footer>
+</body>
+</html>

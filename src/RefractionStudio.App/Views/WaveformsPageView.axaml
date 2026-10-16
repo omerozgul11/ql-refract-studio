@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:v="using:RefractionStudio.App.Views"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             x:Class="RefractionStudio.App.Views.WaveformsPageView"
+             x:DataType="vm:WaveformsPageViewModel">
+  <Grid ColumnDefinitions="*,12,300" RowDefinitions="*,Auto,Auto">
+    <v:GatherViewerView DataContext="{Binding Viewer}" />
+    <v:TraceInspector Grid.Column="2" DataContext="{Binding Viewer}"
+                      IsVisible="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).IsInspectorVisible, FallbackValue=True}" />
+    <CheckBox Grid.Row="1" Content="Show the amplitude spectrum of this shot" IsChecked="{Binding ShowSpectrum}" Margin="0,6,0,0" />
+    <Border Grid.Row="2" Grid.ColumnSpan="3" Classes="panel" Height="200" ClipToBounds="True" Margin="0,4,0,0" IsVisible="{Binding ShowSpectrum}">
+      <c:PlotView Plot="{Binding Spectrum}" />
+    </Border>
+  </Grid>
+</UserControl>

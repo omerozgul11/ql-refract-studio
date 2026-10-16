@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             x:Class="RefractionStudio.App.Views.TraceInspector"
+             x:DataType="vm:GatherViewerViewModel"
+             x:Name="Root">
+  <ScrollViewer>
+    <StackPanel>
+      <Border Classes="section">
+        <StackPanel>
+          <TextBlock Text="{Binding TraceTitle}" Classes="h3" Margin="0,0,0,2" />
+          <SelectableTextBlock Text="{Binding TraceDetails}" TextWrapping="Wrap" Classes="caption" />
+          <StackPanel IsEnabled="{Binding HasSelection}" Margin="0,6,0,0">
+            <TextBlock Text="Display gain of this trace" Classes="label" />
+            <Grid ColumnDefinitions="*,Auto">
+              <Slider Minimum="0.1" Maximum="10" Value="{Binding TraceGain}" />
+              <TextBlock Grid.Column="1" Text="{Binding TraceGain, StringFormat='×{0:0.0}'}" VerticalAlignment="Center" Margin="8,0,0,0" MinWidth="36" />
+            </Grid>
+            <CheckBox Content="Reverse polarity" IsChecked="{Binding TraceInverted}" />
+            <CheckBox Content="Exclude this trace (dead or noisy)" IsChecked="{Binding TraceExcluded}" />
+            <TextBlock Text="Static time shift (ms)" Classes="label" />
+            <NumericUpDown Value="{Binding TraceShiftMs}" Increment="0.1" FormatString="0.###" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Note" Classes="label" />
+            <TextBox Text="{Binding TraceNote}" PlaceholderText="Reason for the change" />
+            <Button Classes="primary" Content="Apply to trace" Command="{Binding ApplyTraceCommand}" Margin="0,6,0,0" />
+            <TextBlock Classes="caption" Margin="0,6,0,0"
+                       Text="Trace adjustments are recorded in the processing history and never change the raw data." />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <Border Classes="section" IsVisible="{Binding #Root.ShowPickTools}">
+        <StackPanel IsEnabled="{Binding HasSelection}">
+          <TextBlock Text="Pick" Classes="h3" Margin="0,0,0,2" />
+          <TextBlock Text="{Binding PickText}" TextWrapping="Wrap" />
+          <WrapPanel Margin="0,6,0,0">
+            <Button Classes="secondary" Content="Accept" Command="{Binding AcceptSelectedCommand}" Margin="0,0,6,6" ToolTip.Tip="Mark the automatic pick as reviewed (Enter)" />
+            <Button Classes="secondary" Content="Delete" Command="{Binding DeleteSelectedPickCommand}" Margin="0,0,6,6" ToolTip.Tip="Delete the pick (Delete)" />
+            <Button Classes="secondary" Content="Use / exclude" Command="{Binding TogglePickIncludedCommand}" Margin="0,0,6,6" ToolTip.Tip="Keep the pick but exclude it from the analysis" />
+            <Button Classes="secondary" Content="Restore automatic" Command="{Binding RestoreAutomaticCommand}" Margin="0,0,6,6" ToolTip.Tip="Replace a manual pick by the automatic suggestion" />
+            <Button Classes="secondary" Content="Propagate to neighbours" Command="{Binding PropagateFromSelectedCommand}" Margin="0,0,6,6"
+                    ToolTip.Tip="Track this onset to the neighbouring traces by cross-correlation" />
+          </WrapPanel>
+          <TextBlock Classes="caption" TextWrapping="Wrap"
+                     Text="Click a trace to pick; drag a pick to move it (a magnifier appears). ←/→ nudge one sample (Shift: ten), ↑/↓ change trace, Page Up/Down change shot." />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

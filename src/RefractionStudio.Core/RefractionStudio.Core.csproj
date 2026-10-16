@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>RefractionStudio.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/RefractionStudio.Analysis/RefractionStudio.Analysis.csproj" />
+    <ProjectReference Include="../../src/RefractionStudio.Formats/RefractionStudio.Formats.csproj" />
+    <ProjectReference Include="../../src/RefractionStudio.Persistence/RefractionStudio.Persistence.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+</Project>

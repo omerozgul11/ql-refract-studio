@@ -1,0 +1,46 @@
+REFRACTION STUDIO — END-USER LICENCE AGREEMENT
+
+Copyright © 2026 QuakeLogic Inc. All rights reserved.
+
+IMPORTANT: Read this agreement before installing or using Refraction Studio (the "Software"). By
+installing or using the Software you agree to these terms. If you do not agree, do not install or use
+the Software.
+
+1. LICENCE. Subject to payment of the applicable fees (or during an evaluation period), QuakeLogic Inc.
+grants you a non-exclusive, non-transferable licence to install and use the Software on the number of
+computers permitted by your licence. An evaluation (trial) licence is for evaluation only and ends
+automatically at the end of the trial period.
+
+2. RESTRICTIONS. You may not copy (except for backup), modify, reverse engineer, decompile or
+disassemble the Software except as permitted by applicable law; circumvent its licensing mechanism;
+rent, lease, lend, sublicense or distribute it; or remove proprietary notices.
+
+3. YOUR DATA. Projects, survey data and reports you create are yours. The Software does not upload
+project data. Activation and licence checks send only the licence key, an anonymous device identifier
+derived from hardware identifiers, the application version and, if you choose, the computer name.
+
+4. PROFESSIONAL USE. The Software is a tool for qualified professionals. Results depend on field data,
+survey geometry, picks and interpretation choices. The Software does not replace professional
+judgement, and its quality-control indicators do not certify compliance with any standard or code. You
+are responsible for verifying results before relying on them.
+
+5. NO WARRANTY. To the maximum extent permitted by law, the Software is provided "as is", without
+warranty of any kind, express or implied, including fitness for a particular purpose and
+non-infringement.
+
+6. LIMITATION OF LIABILITY. To the maximum extent permitted by law, QuakeLogic Inc. is not liable for
+any indirect, incidental, special or consequential damages, or for loss of data, profits or business,
+arising from the use of or inability to use the Software. Total liability is limited to the fees paid
+for the licence in the twelve months before the claim.
+
+7. UPDATES. Updates may be offered during the maintenance period of your licence. Updates are verified
+for authenticity before installation and are installed only with your confirmation.
+
+8. TERMINATION. This licence ends automatically if you breach it. On termination you must stop using
+the Software; you keep your projects and can continue to open and export them.
+
+9. THIRD-PARTY COMPONENTS. The Software includes open-source components under their own licences; see
+THIRD-PARTY-NOTICES.txt in the installation folder.
+
+10. GOVERNING LAW. This agreement is governed by the laws of the State of California, USA, excluding its
+conflict-of-law rules.

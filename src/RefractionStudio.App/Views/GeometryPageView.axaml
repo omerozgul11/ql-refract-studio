@@ -1,0 +1,217 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:dom="using:RefractionStudio.Domain"
+             xmlns:p="using:RefractionStudio.Persistence"
+             x:Class="RefractionStudio.App.Views.GeometryPageView"
+             x:DataType="vm:GeometryPageViewModel">
+  <Grid>
+    <StackPanel IsVisible="{Binding !HasLines}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+      <PathIcon Data="{StaticResource Icon.Geometry}" Width="40" Height="40" Foreground="{DynamicResource SecondaryText}" />
+      <TextBlock Text="No survey lines yet. Import data first." Classes="muted" />
+    </StackPanel>
+    <DockPanel IsVisible="{Binding HasLines}">
+      <!-- Line selection -->
+      <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+        <TextBlock Text="Line" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,4" />
+        <ComboBox ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}" MinWidth="180" Margin="0,0,12,4">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="dom:SurveyLine">
+              <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox Text="{Binding LineName}" Width="200" Margin="0,0,6,4" ToolTip.Tip="Line name" />
+        <Button Classes="secondary" Content="Rename" Command="{Binding RenameLineCommand}" Margin="0,0,0,4" />
+      </WrapPanel>
+
+      <!-- Warnings -->
+      <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Warnings}" Margin="0,0,0,6">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <Border Classes="callout review" Margin="0,1">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <PathIcon Data="{StaticResource Icon.Warning}" Width="13" Height="13" Foreground="{DynamicResource ReviewBrush}" />
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!-- Spread diagram -->
+      <Border DockPanel.Dock="Top" Classes="panel" Height="170" ClipToBounds="True" Margin="0,0,0,8">
+        <c:PlotView Plot="{Binding Diagram}" />
+      </Border>
+
+      <TabControl Classes="page">
+        <!-- Spread and channels -->
+        <TabItem Header="Spread and channels">
+          <Grid ColumnDefinitions="*,16,300">
+            <DataGrid ItemsSource="{Binding Channels}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserSortColumns="False"
+                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+              <DataGrid.Columns>
+                <DataGridTextColumn x:DataType="vm:ChannelRow" Header="Channel" Binding="{Binding Channel}" IsReadOnly="True" Width="Auto" />
+                <DataGridTextColumn x:DataType="vm:ChannelRow" Header="Position (m)" Binding="{Binding PositionText}" IsReadOnly="True" Width="Auto" />
+                <DataGridTemplateColumn Header="Role" Width="170">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ChannelRow">
+                      <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:GeometryPageViewModel)DataContext).Roles}" SelectedItem="{Binding Role}"
+                                HorizontalAlignment="Stretch" Margin="2,1" Padding="6,2" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="x override (m)" Width="120">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ChannelRow">
+                      <TextBox Text="{Binding XOverride}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Elevation (m)" Width="120">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ChannelRow">
+                      <TextBox Text="{Binding ElevationOverride}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Reverse polarity" Width="Auto">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ChannelRow">
+                      <CheckBox IsChecked="{Binding InvertPolarity}" HorizontalAlignment="Center" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="" Width="Auto">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ChannelRow">
+                      <Button Classes="link" Content="Apply" FontSize="12" Margin="8,0"
+                              Command="{Binding $parent[UserControl].((vm:GeometryPageViewModel)DataContext).ApplyChannelCommand}" CommandParameter="{Binding}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+            <ScrollViewer Grid.Column="2">
+              <StackPanel>
+                <Border Classes="section">
+                  <StackPanel>
+                    <TextBlock Text="Spread layout" Classes="h3" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Spreads}" SelectedItem="{Binding SelectedSpread}" HorizontalAlignment="Stretch">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="dom:Spread">
+                          <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Text="First geophone position (m)" Classes="label" />
+                    <NumericUpDown Value="{Binding FirstReceiverX}" Increment="0.5" FormatString="0.###" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Geophone spacing (m)" Classes="label" />
+                    <NumericUpDown Value="{Binding Spacing}" Minimum="0.01" Increment="0.5" FormatString="0.###" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Channel order" Classes="label" />
+                    <ComboBox ItemsSource="{Binding Directions}" SelectedItem="{Binding Direction}" HorizontalAlignment="Stretch" />
+                    <Button Classes="primary" Content="Apply layout" Command="{Binding ApplySpreadCommand}" Margin="0,8,0,0" />
+                    <TextBlock Classes="caption" Margin="0,6,0,0"
+                               Text="Receiver channels are numbered along the line; a channel marked as Reference records the shot instant and Aux / Unused channels are ignored." />
+                  </StackPanel>
+                </Border>
+                <Border Classes="section">
+                  <StackPanel>
+                    <TextBlock Text="Spread profiles" Classes="h3" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" HorizontalAlignment="Stretch" PlaceholderText="Choose a profile">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="p:SpreadProfile">
+                          <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Classes="secondary" Content="Apply channel roles" Command="{Binding ApplyProfileCommand}" Margin="0,4,0,8" />
+                    <TextBox Text="{Binding ProfileName}" PlaceholderText="Name for a new profile" />
+                    <Button Classes="secondary" Content="Save this spread as a profile" Command="{Binding SaveProfileCommand}" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </ScrollViewer>
+          </Grid>
+        </TabItem>
+
+        <!-- Shots -->
+        <TabItem Header="Shots">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Classes="caption" Margin="0,0,0,6" TextWrapping="Wrap"
+                       Text="Shot positions are along the line in metres. Leave the elevation empty to use the ground profile. Depth is the source depth below ground (0 for a surface impact). Press Apply after editing a row." />
+            <DataGrid ItemsSource="{Binding Shots}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserSortColumns="False"
+                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+              <DataGrid.Columns>
+                <DataGridTextColumn x:DataType="vm:ShotRow" Header="Shot" Binding="{Binding Label}" IsReadOnly="True" Width="Auto" />
+                <DataGridTemplateColumn Header="Position x (m)" Width="120">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ShotRow">
+                      <TextBox Text="{Binding X}" Margin="2,1" Padding="4,2" MinHeight="22" Classes.problem="{Binding NeedsPosition}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Elevation (m)" Width="110">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ShotRow">
+                      <TextBox Text="{Binding Elevation}" PlaceholderText="{Binding GroundElevation}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Depth (m)" Width="90">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ShotRow">
+                      <TextBox Text="{Binding Depth}" Margin="2,1" Padding="4,2" MinHeight="22" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Used" Width="Auto">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ShotRow">
+                      <CheckBox IsChecked="{Binding Included}" HorizontalAlignment="Center" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn x:DataType="vm:ShotRow" Header="Records" Binding="{Binding Records}" IsReadOnly="True" Width="*" />
+                <DataGridTemplateColumn Header="" Width="Auto">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="vm:ShotRow">
+                      <StackPanel Orientation="Horizontal" Spacing="10" Margin="8,0">
+                        <Button Classes="link" Content="Apply" FontSize="12"
+                                Command="{Binding $parent[UserControl].((vm:GeometryPageViewModel)DataContext).ApplyShotCommand}" CommandParameter="{Binding}" />
+                        <Button Classes="link" Content="Stack / single" FontSize="12" ToolTip.Tip="Combine the records of this shot or use the first only"
+                                Command="{Binding $parent[UserControl].((vm:GeometryPageViewModel)DataContext).ToggleCombineCommand}" CommandParameter="{Binding}" />
+                        <Button Classes="link" Content="Flip last record" FontSize="12" ToolTip.Tip="Reverse the polarity of the last record before combining (SH left/right pairs)"
+                                Command="{Binding $parent[UserControl].((vm:GeometryPageViewModel)DataContext).FlipMemberPolarityCommand}" CommandParameter="{Binding}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </DockPanel>
+        </TabItem>
+
+        <!-- Ground profile -->
+        <TabItem Header="Ground profile">
+          <Grid ColumnDefinitions="320,16,*">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Text="One point per line: x (m), elevation (m)" Classes="label" />
+              <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                <Button Classes="primary" Content="Apply" Command="{Binding ApplyTopographyCommand}" />
+                <Button Classes="secondary" Content="Import CSV…" Command="{Binding ImportTopographyCommand}" />
+              </StackPanel>
+              <TextBox Text="{Binding TopographyText}" AcceptsReturn="True" Classes="mono" FontFamily="Consolas, Menlo, DejaVu Sans Mono, monospace" />
+            </DockPanel>
+            <StackPanel Grid.Column="2" Spacing="6">
+              <TextBlock Text="About the ground profile" Classes="h3" />
+              <TextBlock TextWrapping="Wrap" Text="Elevations of geophones and shots are interpolated linearly from these points. Enter points covering the whole line including the off-end shots; beyond the ends the end elevation is held constant." />
+              <TextBlock TextWrapping="Wrap" Classes="muted" Text="Sections are drawn in elevation; depths in tables and profiles are below the local ground surface. Leave the list empty for flat ground at elevation 0." />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </DockPanel>
+  </Grid>
+</UserControl>

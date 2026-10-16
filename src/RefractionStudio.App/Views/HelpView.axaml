@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:inf="using:RefractionStudio.Infrastructure"
+             x:Class="RefractionStudio.App.Views.HelpView"
+             x:DataType="vm:HelpViewModel">
+  <Grid ColumnDefinitions="260,*" Margin="0,0,0,10">
+    <DockPanel Margin="12,0,0,0">
+      <TextBox DockPanel.Dock="Top" Text="{Binding Query}" PlaceholderText="Search help…" />
+      <Button DockPanel.Dock="Top" Classes="secondary" Content="Open the user guide" Command="{Binding OpenGuideCommand}" HorizontalAlignment="Stretch" Margin="0,0,0,6" />
+      <ListBox ItemsSource="{Binding Topics}" SelectedItem="{Binding Selected}" Background="Transparent">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="inf:HelpTopic">
+            <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+    <ScrollViewer Grid.Column="1" Padding="20,0,20,0">
+      <Grid>
+        <c:MarkdownView Markdown="{Binding UserGuide}" IsVisible="{Binding ShowGuide}" MaxWidth="760" HorizontalAlignment="Left" />
+        <StackPanel IsVisible="{Binding !ShowGuide}" Spacing="10" MaxWidth="700" HorizontalAlignment="Left">
+          <TextBlock Text="{Binding Selected.Title, FallbackValue='Choose a topic'}" Classes="h1" TextWrapping="Wrap" />
+          <StackPanel IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}" Spacing="10">
+            <StackPanel>
+              <TextBlock Text="What it does" Classes="h3" />
+              <SelectableTextBlock Text="{Binding Selected.WhatItDoes, FallbackValue=''}" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="When to use it" Classes="h3" />
+              <SelectableTextBlock Text="{Binding Selected.WhenToUse, FallbackValue=''}" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="When not to use it" Classes="h3" />
+              <SelectableTextBlock Text="{Binding Selected.WhenNotToUse, FallbackValue=''}" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel IsVisible="{Binding Selected.Details, Converter={x:Static StringConverters.IsNotNullOrEmpty}, FallbackValue=False}">
+              <TextBlock Text="Details" Classes="h3" />
+              <SelectableTextBlock Text="{Binding Selected.Details, FallbackValue=''}" TextWrapping="Wrap" />
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

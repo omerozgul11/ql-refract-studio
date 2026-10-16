@@ -1,0 +1,44 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Licenses.IndexModel
+@{
+    ViewData["Title"] = "Licences";
+}
+<div class="toolbar">
+    <h1>Licences</h1>
+    @if (Model.CanWrite) { <a class="button" asp-page="Create">New licence</a> }
+</div>
+<form method="get" class="row">
+    <label>Search <input type="search" name="q" value="@Model.Query" placeholder="Last 4 key characters, customer, licence id" /></label>
+    <label>Status
+        <select name="status">
+            <option value="">Any</option>
+            @foreach (var s in Enum.GetValues<LicenseRecordStatus>())
+            {
+                var v = Fmt.Status(s);
+                <option value="@v" selected="@(string.Equals(Model.Status, v, StringComparison.OrdinalIgnoreCase))">@v</option>
+            }
+        </select>
+    </label>
+    <button type="submit" class="secondary">Filter</button>
+</form>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Key</th><th>Customer</th><th>Product / edition</th><th>Status</th><th>Seats used</th><th>Expires</th><th>Maintenance</th><th>Created</th></tr></thead>
+        <tbody>
+        @foreach (var l in Model.Rows)
+        {
+            <tr>
+                <td><a class="mono" asp-page="Details" asp-route-id="@l.Id">…@l.KeyHint</a></td>
+                <td>@l.CustomerName<br /><span class="small muted">@l.CustomerEmail</span></td>
+                <td>@l.Product<br /><span class="small muted">@l.Edition</span></td>
+                <td><span class="badge @Fmt.Status(l.Status)">@Fmt.Status(l.Status)</span></td>
+                <td>@l.InUse / @l.Seats</td>
+                <td>@Fmt.Expiry(l.ExpiresAt)</td>
+                <td>@Fmt.Date(l.MaintenanceUntil)</td>
+                <td>@Fmt.Date(l.CreatedAt)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<partial name="_Pager" model="Model.Paging" />

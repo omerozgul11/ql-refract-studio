@@ -1,0 +1,70 @@
+@page "{id:guid}"
+@model RefractionStudio.AdminPortal.Pages.Devices.DetailsModel
+@{
+    var d = Model.Device;
+    ViewData["Title"] = d.MachineName ?? "Device";
+}
+<h1>@(d.MachineName ?? "Device") @if (d.Blocked) { <span class="badge blocked">blocked</span> }</h1>
+<div class="grid">
+    <div class="panel">
+        <dl class="facts">
+            <dt>Fingerprint</dt><dd class="mono">@d.Fingerprint</dd>
+            <dt>Product</dt><dd>@d.Product</dd>
+            <dt>Operating system</dt><dd>@(d.OsVersion ?? "—")</dd>
+            <dt>Component hashes</dt><dd class="mono">@foreach (var h in d.ComponentHashes) { @Fmt.Hash(h)<br /> }</dd>
+            <dt>First seen</dt><dd>@Fmt.Time(d.FirstSeen)</dd>
+            <dt>Last seen</dt><dd>@Fmt.Time(d.LastSeen)</dd>
+            @if (d.Blocked) { <dt>Blocked because</dt><dd>@(d.BlockedReason ?? "—")</dd> }
+        </dl>
+    </div>
+    @if (Model.CanWrite)
+    {
+        <div class="panel">
+            @if (d.Blocked)
+            {
+                <form method="post" asp-page-handler="Unblock" asp-route-id="@d.Id" class="stack">
+                    <p>Unblocking lets this computer activate licences and start trials again.</p>
+                    <button type="submit">Unblock device</button>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-page-handler="Block" asp-route-id="@d.Id" class="stack">
+                    <label>Reason <input asp-for="Reason" required /></label>
+                    <p class="small muted">A blocked computer cannot activate, validate or start a trial. Existing tokens stop working at the next online check.</p>
+                    <button type="submit" class="danger">Block device</button>
+                </form>
+            }
+        </div>
+    }
+</div>
+<h2>Activations</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Licence</th><th>Activated</th><th>Last validated</th><th>App version</th><th>Deactivated</th></tr></thead>
+        <tbody>
+        @foreach (var a in Model.Activations)
+        {
+            <tr>
+                <td><a class="mono" asp-page="/Licenses/Details" asp-route-id="@a.LicenseId">…@a.License?.KeyHint</a></td>
+                <td>@Fmt.Time(a.ActivatedAt)</td>
+                <td>@Fmt.Time(a.LastValidatedAt)</td>
+                <td>@(a.AppVersion ?? "—")</td>
+                <td>@if (a.DeactivatedAt is null) { <span class="badge active">active</span> } else { <span>@Fmt.Time(a.DeactivatedAt) (@a.DeactivationReason)</span> }</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<h2>Events</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>When</th><th>Event</th><th>By</th><th>Details</th></tr></thead>
+        <tbody>
+        @foreach (var e in Model.Events)
+        {
+            <tr><td class="small">@Fmt.Time(e.OccurredAt)</td><td>@e.Type</td><td class="small">@e.Actor</td><td><pre class="details">@e.Details</pre></td></tr>
+        }
+        </tbody>
+    </table>
+</div>

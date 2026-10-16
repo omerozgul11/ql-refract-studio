@@ -1,0 +1,9 @@
+global using System.Net;
+global using System.Net.Http.Json;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using RefractionStudio.Licensing;
+global using RefractionStudio.Server.Data;
+global using RefractionStudio.Server.Data.Entities;
+global using RefractionStudio.Server.Data.Services;
+global using Xunit;

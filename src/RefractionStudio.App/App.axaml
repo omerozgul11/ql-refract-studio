@@ -1,0 +1,64 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:RefractionStudio.App"
+             x:Class="RefractionStudio.App.App"
+             Name="Refraction Studio"
+             RequestedThemeVariant="Default">
+  <Application.DataTemplates>
+    <local:ViewLocator />
+  </Application.DataTemplates>
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="AppBackground" Color="#F4F6F8" />
+          <SolidColorBrush x:Key="PanelBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="SubtleBackground" Color="#EEF1F4" />
+          <SolidColorBrush x:Key="HoverBackground" Color="#E6EBF0" />
+          <SolidColorBrush x:Key="SelectedBackground" Color="#DCEAF7" />
+          <SolidColorBrush x:Key="BorderBrush" Color="#D9DEE4" />
+          <SolidColorBrush x:Key="PrimaryText" Color="#1F2328" />
+          <SolidColorBrush x:Key="SecondaryText" Color="#5F6770" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#0B5C9E" />
+          <SolidColorBrush x:Key="AccentText" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="OkBrush" Color="#1A7F37" />
+          <SolidColorBrush x:Key="ReviewBrush" Color="#9A6700" />
+          <SolidColorBrush x:Key="ProblemBrush" Color="#C42B1C" />
+          <SolidColorBrush x:Key="OkBackground" Color="#E8F5EC" />
+          <SolidColorBrush x:Key="ReviewBackground" Color="#FFF4D6" />
+          <SolidColorBrush x:Key="ProblemBackground" Color="#FDE7E4" />
+          <SolidColorBrush x:Key="InfoBackground" Color="#E8F1FA" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="AppBackground" Color="#15181C" />
+          <SolidColorBrush x:Key="PanelBackground" Color="#1C2025" />
+          <SolidColorBrush x:Key="SubtleBackground" Color="#23282E" />
+          <SolidColorBrush x:Key="HoverBackground" Color="#2A3037" />
+          <SolidColorBrush x:Key="SelectedBackground" Color="#1E3A57" />
+          <SolidColorBrush x:Key="BorderBrush" Color="#323941" />
+          <SolidColorBrush x:Key="PrimaryText" Color="#E6E8EB" />
+          <SolidColorBrush x:Key="SecondaryText" Color="#9AA2AB" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#4CA8F0" />
+          <SolidColorBrush x:Key="AccentText" Color="#0B1520" />
+          <SolidColorBrush x:Key="OkBrush" Color="#4CC36E" />
+          <SolidColorBrush x:Key="ReviewBrush" Color="#F2C03A" />
+          <SolidColorBrush x:Key="ProblemBrush" Color="#FF6B5B" />
+          <SolidColorBrush x:Key="OkBackground" Color="#173322" />
+          <SolidColorBrush x:Key="ReviewBackground" Color="#3A3014" />
+          <SolidColorBrush x:Key="ProblemBackground" Color="#3D1C19" />
+          <SolidColorBrush x:Key="InfoBackground" Color="#1A2B3D" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://RefractionStudio/Styles/Icons.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <StyleInclude Source="avares://RefractionStudio/Styles/AppStyles.axaml" />
+  </Application.Styles>
+</Application>

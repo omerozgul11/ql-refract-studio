@@ -1,0 +1,21 @@
+# Build output and local tools
+bin/
+obj/
+.tools/
+artifacts/
+TestResults/
+.vs/
+*.user
+*.rfsx.tmp
+
+# Secrets — never commit (templates: .env.example, server/.env.example)
+.env
+.env.*
+!.env.example
+.secrets/
+secrets/
+*.private.pem
+*.key
+*.pfx
+*.p12
+*.snk

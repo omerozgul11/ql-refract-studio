@@ -1,0 +1,32 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Audit.IndexModel
+@{
+    ViewData["Title"] = "Audit log";
+}
+<h1>Audit log</h1>
+<p class="muted">Append-only record of administrative and security-relevant actions. Entries cannot be edited or deleted. IP addresses are stored as keyed hashes.</p>
+<form method="get" class="row">
+    <label>Action starts with <input type="search" name="action" value="@Model.ActionFilter" placeholder="license., admin., trial." /></label>
+    <label>Actor contains <input type="search" name="actor" value="@Model.ActorFilter" placeholder="admin e-mail, stripe, system" /></label>
+    <button type="submit" class="secondary">Filter</button>
+</form>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Subject</th><th>Details</th><th>IP hash</th></tr></thead>
+        <tbody>
+        @foreach (var e in Model.Rows)
+        {
+            var link = RefractionStudio.AdminPortal.Pages.Audit.IndexModel.Link(e);
+            <tr>
+                <td class="small">@Fmt.Time(e.OccurredAt)</td>
+                <td class="small">@e.Actor</td>
+                <td>@e.Action</td>
+                <td class="small">@if (link is not null) { <a href="@link">@e.EntityType @e.EntityId?[..Math.Min(8, e.EntityId.Length)]</a> } else { @e.EntityType }</td>
+                <td><pre class="details">@e.Details</pre></td>
+                <td class="mono muted">@Fmt.Hash(e.IpHash)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<partial name="_Pager" model="Model.Paging" />

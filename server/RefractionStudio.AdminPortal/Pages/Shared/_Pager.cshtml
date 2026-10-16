@@ -1,0 +1,22 @@
+@model Paging
+@using Microsoft.AspNetCore.WebUtilities
+@{
+    string Link(int page)
+    {
+        var query = Context.Request.Query.ToDictionary(q => q.Key, q => (string?)q.Value.ToString());
+        query["p"] = page.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        return QueryHelpers.AddQueryString(Context.Request.Path, query);
+    }
+}
+@if (Model.PageCount > 1)
+{
+    <nav class="pager">
+        @if (Model.HasPrevious) { <a href="@Link(Model.PageNumber - 1)">‹ Previous</a> }
+        <span>Page @Model.PageNumber of @Model.PageCount (@Model.TotalCount items)</span>
+        @if (Model.HasNext) { <a href="@Link(Model.PageNumber + 1)">Next ›</a> }
+    </nav>
+}
+else
+{
+    <p class="muted small">@Model.TotalCount item(s)</p>
+}

@@ -1,0 +1,31 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Activations.IndexModel
+@{
+    ViewData["Title"] = "Activations";
+}
+<h1>Activations</h1>
+<form method="get" class="row">
+    <label>Search <input type="search" name="q" value="@Model.Query" placeholder="Key hint, customer e-mail, computer name" /></label>
+    <label class="check"><input type="checkbox" name="active" value="true" checked="@Model.ActiveOnly" /> Active only</label>
+    <button type="submit" class="secondary">Filter</button>
+</form>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Activated</th><th>Licence</th><th>Customer</th><th>Computer</th><th>App version</th><th>Last validated</th><th>Deactivated</th></tr></thead>
+        <tbody>
+        @foreach (var a in Model.Rows)
+        {
+            <tr>
+                <td>@Fmt.Time(a.ActivatedAt)</td>
+                <td><a class="mono" asp-page="/Licenses/Details" asp-route-id="@a.LicenseId">…@a.License?.KeyHint</a></td>
+                <td>@a.License?.Customer?.Email</td>
+                <td><a asp-page="/Devices/Details" asp-route-id="@a.DeviceId">@(a.Device?.MachineName ?? Fmt.Hash(a.Device?.Fingerprint))</a></td>
+                <td>@(a.AppVersion ?? "—")</td>
+                <td>@Fmt.Time(a.LastValidatedAt)</td>
+                <td>@if (a.DeactivatedAt is null) { <span class="badge active">active</span> } else { <span>@Fmt.Time(a.DeactivatedAt) <span class="small muted">(@a.DeactivationReason)</span></span> }</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<partial name="_Pager" model="Model.Paging" />

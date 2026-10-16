@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:v="using:RefractionStudio.App.Views"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             x:Class="RefractionStudio.App.Views.PicksPageView"
+             x:DataType="vm:PicksPageViewModel">
+  <DockPanel>
+    <!-- Picking toolbar -->
+    <Border DockPanel.Dock="Top" Classes="section" Padding="10,6">
+      <StackPanel Spacing="2">
+        <WrapPanel>
+          <TextBlock Text="Picker" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding Algorithms}" SelectedItem="{Binding Algorithm}" MinWidth="170" Margin="0,0,8,4" ToolTip.Tip="{Binding AlgorithmHelp}" />
+          <Button Classes="primary" Command="{Binding AutoPickCommand}" Margin="0,0,8,4">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <PathIcon Data="{StaticResource Icon.Wand}" Width="13" Height="13" Foreground="{DynamicResource AccentText}" />
+              <TextBlock Text="Pick automatically" />
+            </StackPanel>
+          </Button>
+          <CheckBox Content="Current shot only" IsChecked="{Binding CurrentShotOnly}" Margin="0,0,14,4"
+                    ToolTip.Tip="Limit automatic picking, acceptance and the table to the shot shown" />
+          <Border Width="1" Background="{DynamicResource BorderBrush}" Margin="0,2,12,6" />
+          <Button Classes="secondary" Content="Accept high-confidence" Command="{Binding AcceptHighConfidenceCommand}" Margin="0,0,6,4"
+                  ToolTip.Tip="Mark automatic picks with high confidence as reviewed" />
+          <Button Classes="secondary" Content="Accept this shot" Command="{Binding AcceptShotCommand}" Margin="0,0,6,4" />
+          <Button Classes="secondary" Content="Delete shot picks…" Command="{Binding DeleteShotPicksCommand}" Margin="0,0,14,4" />
+          <CheckBox Content="Snap clicks to the onset" IsChecked="{Binding SnapToOnset}" Margin="0,0,0,4"
+                    ToolTip.Tip="Moves a clicked pick to the nearest onset found by the picker (or hold Shift while clicking)" />
+        </WrapPanel>
+        <Expander Header="Picker settings" Padding="8,4" ToolTip.Tip="{Binding AlgorithmHelp}">
+          <WrapPanel>
+            <StackPanel Margin="0,0,14,0">
+              <TextBlock Text="Short window (ms)" Classes="label" />
+              <NumericUpDown Value="{Binding ShortWindowMs}" Minimum="0.2" Maximum="50" Increment="0.5" FormatString="0.##" Width="130" />
+            </StackPanel>
+            <StackPanel Margin="0,0,14,0">
+              <TextBlock Text="Long window (ms)" Classes="label" />
+              <NumericUpDown Value="{Binding LongWindowMs}" Minimum="1" Maximum="500" Increment="5" FormatString="0.#" Width="130" />
+            </StackPanel>
+            <StackPanel Margin="0,0,14,0">
+              <TextBlock Text="Min. apparent velocity (m/s)" Classes="label" />
+              <NumericUpDown Value="{Binding MinVelocity}" Minimum="0" Maximum="10000" Increment="50" FormatString="0" Width="150" ToolTip.Tip="0 = no limit" />
+            </StackPanel>
+            <StackPanel Margin="0,0,14,0">
+              <TextBlock Text="Max. apparent velocity (m/s)" Classes="label" />
+              <NumericUpDown Value="{Binding MaxVelocity}" Minimum="0" Maximum="20000" Increment="250" FormatString="0" Width="150" ToolTip.Tip="0 = no limit" />
+            </StackPanel>
+            <StackPanel Margin="0,0,14,0">
+              <TextBlock Text="Window margin (ms)" Classes="label" />
+              <NumericUpDown Value="{Binding MarginMs}" Minimum="0" Maximum="200" Increment="1" FormatString="0.#" Width="130" />
+            </StackPanel>
+            <StackPanel VerticalAlignment="Bottom">
+              <CheckBox Content="Guide by neighbouring picks" IsChecked="{Binding NeighbourGuidance}" />
+              <Button Classes="secondary" Content="Save as line defaults" Command="{Binding SavePickerSettingsCommand}" Margin="0,0,0,4" />
+            </StackPanel>
+          </WrapPanel>
+        </Expander>
+      </StackPanel>
+    </Border>
+
+    <Grid RowDefinitions="3*,6,2*" ColumnDefinitions="*,12,300">
+      <v:GatherViewerView x:Name="Gather" DataContext="{Binding Viewer}" AllowPicking="True"
+                          SnapToOnset="{Binding $parent[UserControl].((vm:PicksPageViewModel)DataContext).SnapToOnset}" />
+      <v:TraceInspector Grid.Column="2" Grid.RowSpan="3" DataContext="{Binding Viewer}" ShowPickTools="True"
+                        IsVisible="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).IsInspectorVisible, FallbackValue=True}" />
+      <GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Transparent" />
+      <Grid Grid.Row="2" ColumnDefinitions="3*,10,2*">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" Classes="caption" Margin="0,0,0,4" />
+          <DataGrid ItemsSource="{Binding Picks}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False" HeadersVisibility="Column"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CanUserSortColumns="True">
+            <DataGrid.Columns>
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Shot" Binding="{Binding Shot}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Ch" Binding="{Binding Channel}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="x (m)" Binding="{Binding X}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Offset (m)" Binding="{Binding Offset}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Pick (ms)" Binding="{Binding TimeMs}" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Shot corr. (ms)" Binding="{Binding Correction}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Corrected (ms)" Binding="{Binding CorrectedMs}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Layer" Binding="{Binding Layer}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Origin" Binding="{Binding Origin}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Confidence" Binding="{Binding Confidence}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="SNR" Binding="{Binding Snr}" IsReadOnly="True" Width="Auto" />
+              <DataGridCheckBoxColumn x:DataType="vm:PickRow" Header="Used" Binding="{Binding Included}" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Status" Binding="{Binding Status}" IsReadOnly="True" Width="Auto" />
+              <DataGridTextColumn x:DataType="vm:PickRow" Header="Comment" Binding="{Binding Comment}" Width="*" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+        <Border Grid.Column="2" Classes="panel" ClipToBounds="True">
+          <c:PlotView x:Name="TravelTimes" Plot="{Binding TravelTimes}" ToolTip.Tip="Click a point to show its trace" />
+        </Border>
+      </Grid>
+    </Grid>
+  </DockPanel>
+</UserControl>

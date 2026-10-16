@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             x:Class="RefractionStudio.App.Views.LicenseView"
+             x:DataType="vm:LicenseViewModel">
+  <ScrollViewer>
+    <StackPanel Margin="18,0,18,16" Spacing="10">
+      <!-- Status -->
+      <Border Classes="callout info">
+        <StackPanel Spacing="2">
+          <TextBlock Text="{Binding Status.Title}" FontWeight="SemiBold" FontSize="15" />
+          <TextBlock Text="{Binding Status.Message}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <!-- Welcome: not activated -->
+      <StackPanel IsVisible="{Binding !IsActivated}" Spacing="8">
+        <TextBlock Text="Welcome to Refraction Studio" Classes="h2" />
+        <TextBlock TextWrapping="Wrap" Text="Start a free 14-day trial with all features, or activate the licence you purchased. Activation needs an internet connection once; afterwards the software works offline and checks the licence periodically." />
+        <TextBlock Text="E-mail address (optional — we send one reminder before the trial ends)" Classes="label" />
+        <TextBox Text="{Binding Email}" PlaceholderText="name@company.com" />
+        <Button Classes="primary" Content="Start 14-day trial" Command="{Binding StartTrialCommand}" IsEnabled="{Binding !IsWorking}" HorizontalAlignment="Left" />
+      </StackPanel>
+
+      <!-- Activation -->
+      <Border Classes="section">
+        <StackPanel>
+          <TextBlock Text="Activate a licence" Classes="h3" Margin="0,0,0,4" />
+          <TextBlock Text="Licence key" Classes="label" />
+          <TextBox Text="{Binding LicenseKey}" PlaceholderText="RFST-XXXX-XXXX-XXXX-XXXX" FontFamily="Consolas, Menlo, DejaVu Sans Mono, monospace" />
+          <TextBlock Text="E-mail address (optional, for licence recovery)" Classes="label" />
+          <TextBox Text="{Binding Email}" />
+          <Button Classes="primary" Content="Activate" Command="{Binding ActivateCommand}" IsEnabled="{Binding !IsWorking}" Margin="0,6,0,0" />
+        </StackPanel>
+      </Border>
+
+      <!-- Details -->
+      <Border Classes="section" IsVisible="{Binding IsActivated}">
+        <StackPanel Spacing="3">
+          <TextBlock Text="{Binding Edition}" Classes="h3" Margin="0,0,0,4" />
+          <TextBlock><Run Text="Licensed to: " Foreground="{DynamicResource SecondaryText}" /><Run Text="{Binding LicensedTo}" /></TextBlock>
+          <TextBlock><Run Text="Licence key: " Foreground="{DynamicResource SecondaryText}" /><Run Text="{Binding KeyHint}" /></TextBlock>
+          <TextBlock Text="{Binding Expiry}" />
+          <TextBlock Text="{Binding Maintenance}" IsVisible="{Binding Maintenance, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding LastVerified}" Classes="muted" />
+          <TextBlock Text="{Binding DeviceName}" Classes="muted" />
+          <WrapPanel Margin="0,8,0,0">
+            <Button Classes="secondary" Content="Check now" Command="{Binding RefreshLicenseCommand}" IsEnabled="{Binding !IsWorking}" Margin="0,0,6,6" />
+            <Button Classes="secondary" Content="Copy licence information" Command="{Binding CopyInfoCommand}" Margin="0,0,6,6" />
+            <Button Classes="secondary" Content="Deactivate this computer…" Command="{Binding DeactivateCommand}" IsEnabled="{Binding !IsWorking}" Margin="0,0,6,6" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsWorking}">
+        <ProgressBar IsIndeterminate="True" Width="120" Height="4" MinHeight="4" VerticalAlignment="Center" />
+        <TextBlock Text="Working…" Classes="caption" />
+      </StackPanel>
+      <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+      <TextBlock Classes="caption" TextWrapping="Wrap"
+                 Text="A licence problem never blocks opening, viewing or exporting your projects; only editing requires a valid licence or trial." />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,149 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:dom="using:RefractionStudio.Domain"
+             xmlns:p="using:RefractionStudio.Persistence"
+             x:Class="RefractionStudio.App.Views.ImportPageView"
+             x:DataType="vm:ImportPageViewModel">
+  <Grid ColumnDefinitions="*,16,340">
+    <DockPanel>
+      <!-- Drop zone -->
+      <Border x:Name="DropZone" DockPanel.Dock="Top" Classes="card" BorderThickness="2" Padding="18" Margin="0,0,0,10"
+              BorderBrush="{DynamicResource BorderBrush}" DragDrop.AllowDrop="True">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <PathIcon Data="{StaticResource Icon.Import}" Width="32" Height="32" Foreground="{DynamicResource AccentBrush}" Margin="0,0,16,0" />
+          <StackPanel Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock Text="Drop SEG-2 (.sg2, .seg2, .dat) or SEG-Y (.sgy, .segy) files or a folder here" FontWeight="SemiBold" />
+            <TextBlock Text="Files are inspected and validated before anything is imported. The original files are stored unchanged inside the project." Classes="caption" />
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <Button Classes="primary" Content="Choose files…" Command="{Binding BrowseFilesCommand}" />
+            <Button Classes="secondary" Content="Choose folder…" Command="{Binding BrowseFolderCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Result of the last import -->
+      <Border DockPanel.Dock="Top" Classes="callout ok" IsVisible="{Binding ResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="0,0,0,10">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <PathIcon Data="{StaticResource Icon.Check}" Width="16" Height="16" Foreground="{DynamicResource OkBrush}" VerticalAlignment="Top" Margin="0,2,10,0" />
+          <SelectableTextBlock Grid.Column="1" Text="{Binding ResultText}" TextWrapping="Wrap" />
+          <Button Grid.Column="2" Classes="primary" Content="Next: check geometry" Command="{Binding GoToGeometryCommand}" VerticalAlignment="Center" Margin="10,0,0,0" />
+        </Grid>
+      </Border>
+
+      <!-- Summary -->
+      <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" TextWrapping="Wrap" Margin="2,0,0,8" IsVisible="{Binding HasFiles}" />
+
+      <Grid RowDefinitions="*,Auto,Auto" IsVisible="{Binding HasFiles}">
+        <DataGrid ItemsSource="{Binding Files}" IsReadOnly="True" AutoGenerateColumns="False" CanUserSortColumns="True" HeadersVisibility="Column"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+          <DataGrid.Columns>
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="File" Binding="{Binding Name}" Width="2*" />
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="Format" Binding="{Binding Format}" Width="2*" />
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="Records" Binding="{Binding Records}" Width="Auto" />
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="Traces" Binding="{Binding Traces}" Width="Auto" />
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="Source x" Binding="{Binding Source}" Width="Auto" />
+            <DataGridTextColumn x:DataType="vm:ImportFileRow" Header="Recorded" Binding="{Binding Recorded}" Width="Auto" />
+            <DataGridTemplateColumn Header="" Width="Auto">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:ImportFileRow">
+                  <Button Classes="link" Content="Remove" FontSize="12" Margin="8,0"
+                          Command="{Binding $parent[UserControl].((vm:ImportPageViewModel)DataContext).RemoveFileCommand}" CommandParameter="{Binding}" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+          </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Validation -->
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Validation" Classes="h2" />
+            <TextBlock VerticalAlignment="Center" Classes="caption">
+              <Run Text="{Binding ErrorCount}" /><Run Text=" error(s), " /><Run Text="{Binding WarningCount}" /><Run Text=" warning(s)" />
+            </TextBlock>
+          </StackPanel>
+          <TextBlock Text="No problems found." Classes="muted" IsVisible="{Binding !Issues.Count}" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="2" MaxHeight="260">
+          <ItemsControl ItemsSource="{Binding Issues}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ImportIssueViewModel">
+                <Border Classes="callout" Margin="0,2"
+                        Classes.problem="{Binding Severity, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Error}"
+                        Classes.review="{Binding Severity, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Warning}"
+                        Classes.info="{Binding Severity, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Information}">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <PathIcon Data="{Binding Icon, Converter={x:Static c:ResourceKeyConverter.Instance}}" Width="14" Height="14" VerticalAlignment="Top" Margin="0,2,10,0" />
+                    <StackPanel Grid.Column="1" Spacing="2">
+                      <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                      <TextBlock Text="{Binding Details}" Classes="caption" IsVisible="{Binding Details, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      <CheckBox IsChecked="{Binding ApplyFix}" IsVisible="{Binding HasFix}">
+                        <TextBlock Text="{Binding FixText}" TextWrapping="Wrap" />
+                      </CheckBox>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+      <StackPanel IsVisible="{Binding !HasFiles}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8" MaxWidth="460">
+        <TextBlock Text="No files selected" Classes="h2" HorizontalAlignment="Center" />
+        <TextBlock TextWrapping="Wrap" TextAlignment="Center" Classes="muted"
+                   Text="Each file normally holds one shot record. Choose the files of one survey line (P or SH) at a time; lines can be added later." />
+      </StackPanel>
+    </DockPanel>
+
+    <!-- Import options -->
+    <ScrollViewer Grid.Column="2">
+      <Border Classes="section">
+        <StackPanel>
+          <TextBlock Text="Import into" Classes="h2" />
+          <RadioButton GroupName="target" Content="A new survey line" IsChecked="{Binding NewLine}" />
+          <RadioButton GroupName="target" Content="An existing line" IsChecked="{Binding !NewLine, Mode=OneWay}" IsEnabled="{Binding !!Lines.Count}" />
+          <StackPanel IsVisible="{Binding NewLine}">
+            <TextBlock Text="Line name" Classes="label" />
+            <TextBox Text="{Binding LineName}" />
+            <TextBlock Text="Wave type" Classes="label" />
+            <ComboBox ItemsSource="{Binding WaveTypes}" SelectedItem="{Binding WaveType}" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Spread profile" Classes="label" />
+            <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding Profile}" HorizontalAlignment="Stretch" PlaceholderText="From the file headers">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="p:SpreadProfile">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Geophone spacing (m)" Classes="label" />
+            <NumericUpDown Value="{Binding Spacing}" Minimum="0.1" Maximum="100" Increment="0.5" FormatString="0.###" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Used when the file headers do not give receiver positions. Positions can be edited in Geometry." Classes="caption" />
+          </StackPanel>
+          <StackPanel IsVisible="{Binding !NewLine}">
+            <TextBlock Text="Line" Classes="label" />
+            <ComboBox ItemsSource="{Binding Lines}" SelectedItem="{Binding TargetLine}" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="dom:SurveyLine">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+          <TextBlock Text="Records at the same position" Classes="label" />
+          <ComboBox ItemsSource="{Binding Groupings}" SelectedItem="{Binding Grouping}" HorizontalAlignment="Stretch" />
+          <TextBlock Text="{Binding GroupingHelp}" Classes="caption" />
+          <Button Classes="primary" Command="{Binding ImportCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,16,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource Icon.Import}" Width="14" Height="14" Foreground="{DynamicResource AccentText}" />
+              <TextBlock Text="Import" />
+            </StackPanel>
+          </Button>
+          <Button Classes="link" Content="Clear the list" Command="{Binding ClearCommand}" HorizontalAlignment="Center" Margin="0,8,0,0" IsVisible="{Binding HasFiles}" />
+        </StackPanel>
+      </Border>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

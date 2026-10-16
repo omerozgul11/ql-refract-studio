@@ -1,0 +1,39 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Releases.IndexModel
+@{
+    ViewData["Title"] = "Software releases";
+}
+<div class="toolbar">
+    <h1>Software releases</h1>
+    @if (Model.IsAdministrator) { <a class="button" asp-page="Create">New release</a> }
+</div>
+<p class="muted">Published releases are offered by the update feed (<span class="mono">/api/updates/{product}/{channel}</span>) in manifests signed with the release key. Installers must be code-signed before upload.</p>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Product</th><th>Version</th><th>Channel</th><th>Released</th><th>Size</th><th>SHA-256</th><th>Minimum version</th><th>Status</th>@if (Model.IsAdministrator) { <th></th> }</tr></thead>
+        <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <tr>
+                <td>@r.Product</td>
+                <td><strong>@r.Version</strong> @if (r.Major) { <span class="badge">major</span> }<br /><a class="small" href="@r.DownloadUrl" rel="noreferrer">installer</a></td>
+                <td>@r.Channel</td>
+                <td>@Fmt.Date(r.ReleasedAt)</td>
+                <td>@Fmt.Bytes(r.Size)</td>
+                <td class="mono">@Fmt.Hash(r.Sha256)</td>
+                <td>@(r.MinimumVersion ?? "any")</td>
+                <td><span class="badge @(r.Published ? "published" : "")">@(r.Published ? "published" : "draft")</span></td>
+                @if (Model.IsAdministrator)
+                {
+                    <td>
+                        <form method="post" asp-page-handler="Publish" asp-route-releaseId="@r.Id" asp-route-publish="@(!r.Published)" class="inline">
+                            <button type="submit" class="small @(r.Published ? "secondary" : "")">@(r.Published ? "Withdraw" : "Publish")</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+        @if (Model.Rows.Count == 0) { <tr><td colspan="9" class="muted">No releases yet.</td></tr> }
+        </tbody>
+    </table>
+</div>

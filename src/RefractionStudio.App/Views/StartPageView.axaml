@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:p="using:RefractionStudio.Persistence"
+             x:Class="RefractionStudio.App.Views.StartPageView"
+             x:DataType="vm:StartPageViewModel">
+  <ScrollViewer>
+    <Grid ColumnDefinitions="*,Auto,*" Margin="24,36">
+      <StackPanel Grid.Column="1" Width="880" Spacing="18">
+        <StackPanel Orientation="Horizontal" Spacing="14">
+          <Image Source="/Assets/app.png" Width="56" Height="56" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Refraction Studio" FontSize="28" FontWeight="SemiBold" />
+            <TextBlock Text="Seismic refraction analysis — P and SH waves, layered models, tomography, Vs30 and reporting" Classes="muted" />
+          </StackPanel>
+        </StackPanel>
+
+        <UniformGrid Columns="4" Margin="0,8,0,0">
+          <Button Classes="big" Command="{Binding NewProjectCommand}" Margin="0,0,8,0" ToolTip.Tip="Ctrl+N">
+            <StackPanel Spacing="6">
+              <PathIcon Data="{StaticResource Icon.New}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" />
+              <TextBlock Text="New project" FontWeight="SemiBold" />
+              <TextBlock Text="Start an empty project" Classes="caption" />
+            </StackPanel>
+          </Button>
+          <Button Classes="big" Command="{Binding OpenProjectCommand}" Margin="4,0" ToolTip.Tip="Ctrl+O">
+            <StackPanel Spacing="6">
+              <PathIcon Data="{StaticResource Icon.Open}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" />
+              <TextBlock Text="Open project" FontWeight="SemiBold" />
+              <TextBlock Text="Open a .rfsx project file" Classes="caption" />
+            </StackPanel>
+          </Button>
+          <Button Classes="big" Command="{Binding ImportSurveyCommand}" Margin="4,0" ToolTip.Tip="Ctrl+I">
+            <StackPanel Spacing="6">
+              <PathIcon Data="{StaticResource Icon.Import}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" />
+              <TextBlock Text="Import survey" FontWeight="SemiBold" />
+              <TextBlock Text="SEG-2 or SEG-Y shot files" Classes="caption" />
+            </StackPanel>
+          </Button>
+          <Button Classes="big" Command="{Binding OpenSampleCommand}" Margin="8,0,0,0">
+            <StackPanel Spacing="6">
+              <PathIcon Data="{StaticResource Icon.Sample}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" />
+              <TextBlock Text="Explore the sample" FontWeight="SemiBold" />
+              <TextBlock Text="A complete P and SH survey" Classes="caption" />
+            </StackPanel>
+          </Button>
+        </UniformGrid>
+
+        <Border Classes="card">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Recent projects" Classes="h2" />
+            <TextBlock Text="No recent projects yet. Projects you open or save appear here." Classes="muted" IsVisible="{Binding !HasRecent}" Margin="0,4" />
+            <ItemsControl ItemsSource="{Binding Recent}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="p:RecentProject">
+                  <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,2">
+                    <Button Classes="big" Padding="10,7" BorderThickness="0" Background="Transparent"
+                            Command="{Binding $parent[UserControl].((vm:StartPageViewModel)DataContext).OpenRecentCommand}" CommandParameter="{Binding}">
+                      <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Path}" Classes="caption" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                      </StackPanel>
+                    </Button>
+                    <TextBlock Grid.Column="1" Text="{Binding OpenedAt, StringFormat='{}{0:d MMM yyyy HH:mm}'}" Classes="caption" VerticalAlignment="Center" Margin="10,0" />
+                    <ToggleButton Grid.Column="2" IsChecked="{Binding Pinned, Mode=OneWay}" Padding="6" Background="Transparent" BorderThickness="0"
+                                  Command="{Binding $parent[UserControl].((vm:StartPageViewModel)DataContext).TogglePinCommand}" CommandParameter="{Binding}"
+                                  ToolTip.Tip="Pin or unpin">
+                      <TextBlock Text="📌" FontSize="12" />
+                    </ToggleButton>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel Spacing="6">
+            <TextBlock Text="Getting started" Classes="h2" />
+            <TextBlock TextWrapping="Wrap" Text="The workflow on the left guides you from data import to the report: Project → Import → Geometry → Waveforms → Processing → P and SH picks → Quality control → Velocity model → Engineering → Results → Report. Each step shows its status, and Guided mode explains what to do. Press F1 on any page for help, or Ctrl+K to find any command." />
+            <TextBlock TextWrapping="Wrap" Classes="muted" Text="Raw data are never modified: processing, picks and interpretations are stored as a history of reversible steps, and every change can be undone." />
+          </StackPanel>
+        </Border>
+
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel>
+            <TextBlock Text="{Binding Version}" Classes="muted" />
+            <TextBlock Text="{Binding UpdateStatus}" Classes="caption" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+            <Button Classes="primary" Content="Install update" Command="{Binding InstallUpdateCommand}" IsVisible="{Binding UpdateAvailable}" />
+            <Button Classes="secondary" Command="{Binding CheckForUpdatesCommand}" CommandParameter="{x:False}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Data="{StaticResource Icon.Update}" Width="13" Height="13" />
+                <TextBlock Text="Check for updates" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</UserControl>

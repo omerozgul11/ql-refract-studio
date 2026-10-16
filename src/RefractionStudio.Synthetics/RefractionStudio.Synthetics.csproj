@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>RefractionStudio.Synthetics</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/RefractionStudio.Core/RefractionStudio.Core.csproj" />
+  </ItemGroup>
+</Project>

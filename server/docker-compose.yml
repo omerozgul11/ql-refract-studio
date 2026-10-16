@@ -1,0 +1,117 @@
+# Refraction Studio licensing back end: PostgreSQL + licence server + admin portal.
+#
+#   cd server
+#   cp .env.example .env            # fill in (never commit .env)
+#   mkdir -p secrets                # signing keys and pepper, see docs/licensing/LICENSE-SERVER.md
+#   docker compose up -d --build
+#
+# Both applications listen on plain HTTP on 127.0.0.1 only; a TLS reverse proxy on the host
+# (Caddy, nginx, Traefik…) terminates HTTPS and forwards X-Forwarded-For / X-Forwarded-Proto.
+name: refraction-licensing
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: refraction_licensing
+      POSTGRES_USER: licensing
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in server/.env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U licensing -d refraction_licensing"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [backend]
+
+  license-server:
+    build:
+      context: ..
+      dockerfile: server/RefractionStudio.LicenseServer/Dockerfile
+    image: quakelogic/refraction-license-server:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Licensing: Host=postgres;Port=5432;Database=refraction_licensing;Username=licensing;Password=${POSTGRES_PASSWORD}
+      Licensing__AutoMigrate: "true"
+      Licensing__SigningKeyPath: /run/secrets/license_signing_key
+      Licensing__ReleaseSigningKeyPath: /run/secrets/release_signing_key
+      Licensing__KeyPepperPath: /run/secrets/key_pepper
+      Licensing__PreviousSigningPublicKeyPath: /run/secrets/previous_signing_public_keys
+      Stripe__WebhookSecret: ${STRIPE_WEBHOOK_SECRET:-}
+      Smtp__Host: ${SMTP_HOST:-}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__Security: ${SMTP_SECURITY:-StartTls}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+      Smtp__FromAddress: ${SMTP_FROM_ADDRESS:-licensing@quakelogic.net}
+      Smtp__FromName: ${SMTP_FROM_NAME:-QuakeLogic Refraction Studio}
+      Email__SupportAddress: ${SUPPORT_ADDRESS:-support@quakelogic.net}
+      Email__DownloadUrl: ${DOWNLOAD_URL:-https://www.quakelogic.net/refraction-studio/download}
+      ReverseProxy__KnownNetworks: ${REVERSE_PROXY_NETWORKS:-172.16.0.0/12}
+    secrets:
+      - license_signing_key
+      - release_signing_key
+      - key_pepper
+      - previous_signing_public_keys
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks: [backend]
+
+  admin-portal:
+    build:
+      context: ..
+      dockerfile: server/RefractionStudio.AdminPortal/Dockerfile
+    image: quakelogic/refraction-admin-portal:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      license-server:
+        condition: service_healthy   # the licence server applies migrations first
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Licensing: Host=postgres;Port=5432;Database=refraction_licensing;Username=licensing;Password=${POSTGRES_PASSWORD}
+      Licensing__AutoMigrate: "true"
+      Licensing__KeyPepperPath: /run/secrets/key_pepper
+      DataProtection__KeysPath: /keys
+      Admin__BootstrapEmail: ${ADMIN_BOOTSTRAP_EMAIL:-}
+      Admin__BootstrapPassword: ${ADMIN_BOOTSTRAP_PASSWORD:-}
+      Email__SupportAddress: ${SUPPORT_ADDRESS:-support@quakelogic.net}
+      Email__DownloadUrl: ${DOWNLOAD_URL:-https://www.quakelogic.net/refraction-studio/download}
+      ReverseProxy__KnownNetworks: ${REVERSE_PROXY_NETWORKS:-172.16.0.0/12}
+    secrets:
+      - key_pepper
+    volumes:
+      - admin-keys:/keys
+    ports:
+      - "127.0.0.1:8081:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks: [backend]
+
+secrets:
+  license_signing_key:
+    file: ./secrets/license-signing.private.pem
+  release_signing_key:
+    file: ./secrets/release-signing.private.pem
+  key_pepper:
+    file: ./secrets/key-pepper.txt
+  previous_signing_public_keys:
+    file: ./secrets/previous-signing.public.pem
+
+volumes:
+  pgdata:
+  admin-keys:
+
+networks:
+  backend:

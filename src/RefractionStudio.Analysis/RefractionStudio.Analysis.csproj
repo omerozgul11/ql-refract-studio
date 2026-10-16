@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>RefractionStudio.Analysis</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/RefractionStudio.Domain/RefractionStudio.Domain.csproj" />
+    <ProjectReference Include="../../src/RefractionStudio.SignalProcessing/RefractionStudio.SignalProcessing.csproj" />
+  </ItemGroup>
+</Project>

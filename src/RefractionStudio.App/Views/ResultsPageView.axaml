@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             x:Class="RefractionStudio.App.Views.ResultsPageView"
+             x:DataType="vm:ResultsPageViewModel">
+  <Grid ColumnDefinitions="*,14,330">
+    <ScrollViewer>
+      <StackPanel>
+        <Border Classes="section">
+          <StackPanel>
+            <TextBlock Text="Summary" Classes="h2" />
+            <TextBlock Text="Results appear here once data are picked and analysed." Classes="muted" IsVisible="{Binding !Summary.Count}" />
+            <ItemsControl ItemsSource="{Binding Summary}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <SelectableTextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,1" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="section">
+          <StackPanel>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="Scenario comparison" Classes="h2" />
+              <Button Grid.Column="1" Classes="secondary" Content="Compare scenarios" Command="{Binding CompareScenariosCommand}" />
+            </Grid>
+            <TextBlock Classes="caption" TextWrapping="Wrap" Margin="0,0,0,8"
+                       Text="Each scenario is analysed with its own picks, layer assignment and settings. Large differences show how sensitive the results are to interpretation choices. Create scenarios on the Project page." />
+            <StackPanel IsVisible="{Binding !!ScenarioNames.Count}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Line" FontWeight="SemiBold" Width="150" />
+                <TextBlock Text="Quantity" FontWeight="SemiBold" Width="200" />
+                <ItemsControl ItemsSource="{Binding ScenarioNames}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                      <TextBlock Text="{Binding}" FontWeight="SemiBold" Width="150" TextTrimming="CharacterEllipsis" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+              <ItemsControl ItemsSource="{Binding Comparison}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ComparisonRow">
+                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                      <TextBlock Text="{Binding Line}" Width="150" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding Quantity}" Width="200" TextTrimming="CharacterEllipsis" />
+                      <ItemsControl ItemsSource="{Binding Values}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="x:String">
+                            <TextBlock Text="{Binding}" Width="150" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Border Grid.Column="2" Classes="section" VerticalAlignment="Top">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Export" Classes="h2" Margin="0" />
+        <Button Classes="big" Command="{Binding ExportXlsxCommand}">
+          <StackPanel>
+            <TextBlock Text="Excel workbook (.xlsx)" FontWeight="SemiBold" />
+            <TextBlock Text="All tables: picks, layers, profiles, Vs30, QC, history" Classes="caption" />
+          </StackPanel>
+        </Button>
+        <Button Classes="big" Command="{Binding ExportCsvCommand}">
+          <StackPanel>
+            <TextBlock Text="CSV files" FontWeight="SemiBold" />
+            <TextBlock Text="One file per table, UTF-8, comma separated" Classes="caption" />
+          </StackPanel>
+        </Button>
+        <Button Classes="big" Command="{Binding ExportFiguresCommand}">
+          <StackPanel>
+            <TextBlock Text="Figures (PNG, SVG, PDF)" FontWeight="SemiBold" />
+            <TextBlock Text="Travel-time curves and sections. Any plot can also be exported from its context menu." Classes="caption" TextWrapping="Wrap" />
+          </StackPanel>
+        </Button>
+        <Button Classes="big" Command="{Binding ExportAuditCommand}">
+          <StackPanel>
+            <TextBlock Text="Audit record (.json)" FontWeight="SemiBold" />
+            <TextBlock Text="Methods, settings, history and results for reproducibility" Classes="caption" TextWrapping="Wrap" />
+          </StackPanel>
+        </Button>
+        <TextBlock Text="{Binding ExportMessage}" TextWrapping="Wrap" Classes="caption" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

@@ -1,0 +1,259 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RefractionStudio.App.ViewModels"
+        xmlns:c="using:RefractionStudio.App.Controls"
+        x:Class="RefractionStudio.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Icon="/Assets/app.ico"
+        Width="1440" Height="900" MinWidth="1024" MinHeight="660"
+        WindowStartupLocation="CenterScreen">
+
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+N" Command="{Binding NewProjectCommand}" />
+    <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenProjectCommand}" />
+    <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+    <KeyBinding Gesture="Ctrl+Z" Command="{Binding UndoCommand}" />
+    <KeyBinding Gesture="Ctrl+Y" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="Ctrl+Shift+Z" Command="{Binding RedoCommand}" />
+    <KeyBinding Gesture="Ctrl+I" Command="{Binding ImportDataCommand}" />
+    <KeyBinding Gesture="Ctrl+R" Command="{Binding ReportCommand}" />
+    <KeyBinding Gesture="Ctrl+K" Command="{Binding OpenPaletteCommand}" />
+    <KeyBinding Gesture="F1" Command="{Binding OpenHelpCommand}" />
+    <KeyBinding Gesture="Escape" Command="{Binding CloseOverlaysCommand}" />
+  </Window.KeyBindings>
+
+  <Grid>
+    <DockPanel>
+      <!-- ───────────── Toolbar ───────────── -->
+      <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="6,4">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <StackPanel Orientation="Horizontal" Spacing="2">
+            <Button Classes="tool" Command="{Binding GoHomeCommand}" ToolTip.Tip="Start page" Padding="6,4" MinWidth="0">
+              <Image Source="/Assets/app.png" Width="30" Height="30" />
+            </Button>
+            <Border Width="1" Background="{DynamicResource BorderBrush}" Margin="4,6" />
+            <Button Classes="tool" Command="{Binding NewProjectCommand}" ToolTip.Tip="New project (Ctrl+N)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.New}" /><TextBlock Text="New" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding OpenProjectCommand}" ToolTip.Tip="Open project (Ctrl+O)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Open}" /><TextBlock Text="Open" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding SaveCommand}" ToolTip.Tip="Save project (Ctrl+S)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Save}" /><TextBlock Text="Save" /></StackPanel>
+            </Button>
+            <Border Width="1" Background="{DynamicResource BorderBrush}" Margin="4,6" />
+            <Button Classes="tool" Command="{Binding UndoCommand}" ToolTip.Tip="{Binding UndoTip}">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Undo}" /><TextBlock Text="Undo" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding RedoCommand}" ToolTip.Tip="{Binding RedoTip}">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Redo}" /><TextBlock Text="Redo" /></StackPanel>
+            </Button>
+            <Border Width="1" Background="{DynamicResource BorderBrush}" Margin="4,6" />
+            <Button Classes="tool" Command="{Binding ImportDataCommand}" ToolTip.Tip="Import SEG-2 or SEG-Y files (Ctrl+I)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Import}" /><TextBlock Text="Import" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding ExportCommand}" ToolTip.Tip="Export tables, figures and the audit record">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Export}" /><TextBlock Text="Export" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding ReportCommand}" ToolTip.Tip="Prepare and generate the PDF report (Ctrl+R)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Report}" /><TextBlock Text="Report" /></StackPanel>
+            </Button>
+          </StackPanel>
+
+          <!-- Project name and save state -->
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="{Binding HasProject}" Margin="12,0">
+            <TextBlock Text="{Binding ProjectTitle}" FontWeight="SemiBold" FontSize="14" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+              <Ellipse Width="7" Height="7" Fill="{DynamicResource ReviewBrush}" IsVisible="{Binding IsDirty}" VerticalAlignment="Center" />
+              <Ellipse Width="7" Height="7" Fill="{DynamicResource OkBrush}" IsVisible="{Binding !IsDirty}" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding SaveStatus}" Classes="caption" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+            <ToggleSwitch IsChecked="{Binding IsExpert}" OnContent="Expert" OffContent="Guided" Margin="0,0,10,0"
+                          ToolTip.Tip="Guided mode explains each step; Expert mode shows every option without explanations." />
+            <Button Classes="tool" Command="{Binding OpenPaletteCommand}" ToolTip.Tip="Command palette (Ctrl+K)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Command}" /><TextBlock Text="Commands" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding OpenLicenseCommand}" ToolTip.Tip="{Binding LicenseDetail}">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.License}" /><TextBlock Text="{Binding LicenseShort}" MaxWidth="120" TextTrimming="CharacterEllipsis" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding OpenSettingsCommand}" ToolTip.Tip="Settings">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Settings}" /><TextBlock Text="Settings" /></StackPanel>
+            </Button>
+            <Button Classes="tool" Command="{Binding OpenHelpCommand}" ToolTip.Tip="Help for this page (F1)">
+              <StackPanel Spacing="2"><PathIcon Data="{StaticResource Icon.Help}" /><TextBlock Text="Help" /></StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ───────────── Licence banner ───────────── -->
+      <Border DockPanel.Dock="Top" IsVisible="{Binding ShowLicenseBanner}" BorderThickness="0,0,0,1" Padding="14,6"
+              Classes.review="{Binding LicenseBannerIsWarning}" Classes.info="{Binding !LicenseBannerIsWarning}">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <PathIcon Data="{StaticResource Icon.License}" Width="14" Height="14" Margin="0,0,8,0" />
+          <TextBlock Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap">
+            <Run Text="{Binding LicenseTitle}" FontWeight="SemiBold" />
+            <Run Text=" — " />
+            <Run Text="{Binding LicenseDetail}" />
+          </TextBlock>
+          <Button Grid.Column="2" Classes="link" Content="Manage licence" Command="{Binding OpenLicenseCommand}" Margin="12,0,0,0" />
+        </Grid>
+      </Border>
+
+      <!-- ───────────── Status bar ───────────── -->
+      <Border DockPanel.Dock="Bottom" Background="{DynamicResource PanelBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="10,3">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+          <TextBlock Text="{Binding StatusMessage}" Classes="caption" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" IsVisible="{Binding Busy.IsBusy}" Margin="12,0">
+            <TextBlock Text="{Binding Busy.Message}" Classes="caption" VerticalAlignment="Center" TextWrapping="NoWrap" />
+            <ProgressBar Width="160" Height="6" MinHeight="6" Minimum="0" Maximum="100" Value="{Binding Busy.Percent}" IsIndeterminate="{Binding Busy.IsIndeterminate}" VerticalAlignment="Center" />
+            <Button Classes="link" Content="Cancel" Command="{Binding Busy.CancelCommand}" IsVisible="{Binding Busy.CanCancel}" FontSize="12" />
+          </StackPanel>
+          <TextBlock Grid.Column="2" Text="{Binding Version}" Classes="caption" VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <!-- ───────────── Workspace ───────────── -->
+      <Grid>
+        <!-- Start page -->
+        <ContentControl Content="{Binding Start}" IsVisible="{Binding SelectedNav, Converter={x:Static ObjectConverters.IsNull}}" />
+
+        <Grid ColumnDefinitions="214,*" IsVisible="{Binding SelectedNav, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <!-- Navigation / workflow stepper -->
+          <Border Background="{DynamicResource PanelBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Text="WORKFLOW" Classes="caption" FontWeight="SemiBold" Margin="16,12,0,4" />
+              <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" Margin="16,6,10,10">
+                <TextBlock Classes="caption ok" Text="✓" Margin="0,0,5,0" />
+                <TextBlock Grid.Column="1" Classes="caption" Text="complete" />
+                <TextBlock Grid.Column="2" Classes="caption progress" Text="●" Margin="0,0,5,0" />
+                <TextBlock Grid.Column="3" Classes="caption" Text="in progress" />
+                <TextBlock Grid.Row="1" Classes="caption warn" Text="!" Margin="0,0,5,0" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Classes="caption" Text="attention" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Classes="caption" Text="○" Margin="0,0,5,0" />
+                <TextBlock Grid.Row="1" Grid.Column="3" Classes="caption" Text="not started" />
+              </Grid>
+              <ListBox Classes="nav" ItemsSource="{Binding NavItems}" SelectedItem="{Binding SelectedNav}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:NavItemViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ToolTip.Tip="{Binding Hint}">
+                      <PathIcon Data="{Binding IconKey, Converter={x:Static c:ResourceKeyConverter.Instance}}" Width="15" Height="15" Margin="0,0,10,0" />
+                      <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2" Text="{Binding StateGlyph}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="6,0,0,0"
+                                 ToolTip.Tip="{Binding StateText}"
+                                 Classes.ok="{Binding State, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Complete}"
+                                 Classes.warn="{Binding State, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=NeedsAttention}"
+                                 Classes.progress="{Binding State, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=InProgress}" />
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </DockPanel>
+          </Border>
+
+          <!-- Current page -->
+          <DockPanel Grid.Column="1" Margin="18,12,18,10">
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+              <TextBlock Text="{Binding SelectedNav.Title, FallbackValue=''}" Classes="h1" />
+              <Button Grid.Column="1" Classes="secondary" Command="{Binding OpenHelpCommand}" ToolTip.Tip="Explain this step (F1)">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <PathIcon Data="{StaticResource Icon.Help}" Width="13" Height="13" />
+                  <TextBlock Text="Explain this step" />
+                </StackPanel>
+              </Button>
+            </Grid>
+            <Border DockPanel.Dock="Top" Classes="callout info" Margin="0,0,0,10" IsVisible="{Binding SelectedNav.Page.ShowGuidance, FallbackValue=False}">
+              <Grid ColumnDefinitions="Auto,*">
+                <PathIcon Data="{StaticResource Icon.Info}" Width="15" Height="15" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,10,0" />
+                <TextBlock Grid.Column="1" Text="{Binding SelectedNav.Page.GuidedText, FallbackValue=''}" TextWrapping="Wrap" />
+              </Grid>
+            </Border>
+            <ContentControl Content="{Binding CurrentPage}" />
+          </DockPanel>
+        </Grid>
+      </Grid>
+    </DockPanel>
+
+    <!-- Drag-and-drop hint -->
+    <Border x:Name="DropHint" IsVisible="False" Background="#88000000" IsHitTestVisible="False">
+      <Border Classes="card" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="30,22">
+        <StackPanel Spacing="8" HorizontalAlignment="Center">
+          <PathIcon Data="{StaticResource Icon.Import}" Width="36" Height="36" Foreground="{DynamicResource AccentBrush}" />
+          <TextBlock Text="Drop to open a project (.rfsx) or import SEG-2 / SEG-Y files" FontSize="15" />
+        </StackPanel>
+      </Border>
+    </Border>
+
+    <!-- ───────────── Overlays ───────────── -->
+    <!-- Command palette -->
+    <Grid IsVisible="{Binding IsPaletteOpen}" Background="#55000000" x:Name="PaletteLayer">
+      <Border Classes="card" Width="600" VerticalAlignment="Top" Margin="0,80,0,0" Padding="10" BoxShadow="0 8 30 0 #50000000">
+        <StackPanel Spacing="6">
+          <TextBox x:Name="PaletteBox" Text="{Binding PaletteQuery}" PlaceholderText="Type a command, page or help topic…" FontSize="15" />
+          <ListBox x:Name="PaletteList" ItemsSource="{Binding PaletteResults}" SelectedItem="{Binding SelectedPaletteCommand}" MaxHeight="440" Background="Transparent">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:PaletteCommand">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBlock Text="{Binding Title}" />
+                  <TextBlock Grid.Column="1" Text="{Binding Category}" Classes="caption" Margin="12,0" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="2" Text="{Binding Shortcut}" Classes="caption" FontWeight="SemiBold" VerticalAlignment="Center" MinWidth="70" TextAlignment="Right" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <TextBlock Text="↑ ↓ to choose · Enter to run · Esc to close" Classes="caption" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- Settings -->
+    <Grid IsVisible="{Binding IsSettingsOpen}" Background="#55000000">
+      <Border Classes="card" Width="900" Margin="40" MaxHeight="760" Padding="0" BoxShadow="0 8 30 0 #50000000">
+        <DockPanel>
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="18,12,10,6">
+            <TextBlock Text="Settings" Classes="h2" />
+            <Button Grid.Column="1" Classes="tool" MinWidth="0" Command="{Binding CloseOverlaysCommand}" ToolTip.Tip="Close (Esc)">
+              <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12" />
+            </Button>
+          </Grid>
+          <ContentControl Content="{Binding Settings}" />
+        </DockPanel>
+      </Border>
+    </Grid>
+
+    <!-- Help -->
+    <Grid IsVisible="{Binding IsHelpOpen}" Background="#55000000">
+      <Border Classes="card" Width="980" Margin="40" MaxHeight="800" Padding="0" BoxShadow="0 8 30 0 #50000000">
+        <DockPanel>
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="18,12,10,6">
+            <TextBlock Text="Help" Classes="h2" />
+            <Button Grid.Column="1" Classes="tool" MinWidth="0" Command="{Binding CloseOverlaysCommand}" ToolTip.Tip="Close (Esc)">
+              <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12" />
+            </Button>
+          </Grid>
+          <ContentControl Content="{Binding Help}" />
+        </DockPanel>
+      </Border>
+    </Grid>
+
+    <!-- Licence -->
+    <Grid IsVisible="{Binding IsLicenseOpen}" Background="#55000000">
+      <Border Classes="card" Width="640" Margin="40" MaxHeight="760" Padding="0" BoxShadow="0 8 30 0 #50000000" VerticalAlignment="Center">
+        <DockPanel>
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="18,12,10,6">
+            <TextBlock Text="Licence" Classes="h2" />
+            <Button Grid.Column="1" Classes="tool" MinWidth="0" Command="{Binding CloseOverlaysCommand}" ToolTip.Tip="Close (Esc)">
+              <PathIcon Data="{StaticResource Icon.Close}" Width="12" Height="12" />
+            </Button>
+          </Grid>
+          <ContentControl Content="{Binding LicensePanel}" />
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,30 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Releases.CreateModel
+@{
+    ViewData["Title"] = "New release";
+}
+<h1>New release</h1>
+@if (Model.Error is not null)
+{
+    <div class="flash error" role="alert">@Model.Error</div>
+}
+<div class="panel">
+    <form method="post" class="stack">
+        <label>Product
+            <select asp-for="Product">@foreach (var p in Model.Products) { <option value="@p.Code">@p.Name</option> }</select>
+        </label>
+        <label>Version <span class="hint">(e.g. 1.2.0 or 1.3.0-beta.1)</span><input asp-for="Version" required /></label>
+        <label>Channel
+            <select asp-for="Channel"><option value="stable">stable</option><option value="beta">beta</option></select>
+        </label>
+        <label>Release date <span class="hint">(offered from this date, UTC)</span><input asp-for="ReleasedOn" type="date" required /></label>
+        <label>Installer download URL (https) <input asp-for="DownloadUrl" type="url" required /></label>
+        <label>Installer SHA-256 <span class="hint">(64 hex characters)</span><input asp-for="Sha256" required pattern="[0-9a-fA-F]{64}" class="mono" /></label>
+        <label>Installer size in bytes <input asp-for="Size" type="number" min="1" required /></label>
+        <label>Minimum version that can update directly <span class="hint">(blank = any)</span><input asp-for="MinimumVersion" /></label>
+        <label>Release notes <span class="hint">(Markdown)</span><textarea asp-for="ReleaseNotes" rows="10"></textarea></label>
+        <label class="check"><input asp-for="Major" type="checkbox" /> Major upgrade (release notes are shown before installing)</label>
+        <label class="check"><input asp-for="Publish" type="checkbox" /> Publish now</label>
+        <button type="submit">Save release</button>
+    </form>
+</div>

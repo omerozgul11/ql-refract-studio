@@ -1,0 +1,94 @@
+@page "{id:guid}"
+@model RefractionStudio.AdminPortal.Pages.Customers.DetailsModel
+@{
+    ViewData["Title"] = Model.Customer.Email;
+}
+<div class="toolbar">
+    <h1>@(string.IsNullOrWhiteSpace(Model.Customer.Name) ? Model.Customer.Email : Model.Customer.Name)</h1>
+    @if (Model.CanWrite) { <a class="button" asp-page="/Licenses/Create" asp-route-email="@Model.Customer.Email">New licence for this customer</a> }
+</div>
+<div class="grid">
+    <div class="panel">
+        <dl class="facts">
+            <dt>E-mail</dt><dd>@Model.Customer.Email</dd>
+            <dt>Company</dt><dd>@(Model.Customer.Company ?? "—")</dd>
+            <dt>Customer since</dt><dd>@Fmt.Time(Model.Customer.CreatedAt)</dd>
+            <dt>Payment provider id</dt><dd class="mono">@(Model.Customer.ProviderCustomerId ?? "—")</dd>
+        </dl>
+    </div>
+    @if (Model.CanWrite)
+    {
+        <div class="panel">
+            <form method="post" asp-page-handler="Update" asp-route-id="@Model.Customer.Id" class="stack">
+                <label>Name <input asp-for="Name" /></label>
+                <label>Company <input asp-for="Company" /></label>
+                <label>Internal notes <textarea asp-for="Notes"></textarea></label>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    }
+</div>
+
+<h2>Licences</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Key</th><th>Product</th><th>Edition</th><th>Status</th><th>Seats</th><th>Expires</th><th>Maintenance</th><th>Created</th></tr></thead>
+        <tbody>
+        @foreach (var l in Model.Licenses)
+        {
+            <tr>
+                <td><a class="mono" asp-page="/Licenses/Details" asp-route-id="@l.Id">…@l.KeyHint</a></td>
+                <td>@l.Product</td>
+                <td>@l.Edition</td>
+                <td><span class="badge @Fmt.Status(l.Status)">@Fmt.Status(l.Status)</span></td>
+                <td>@l.SeatCount</td>
+                <td>@Fmt.Expiry(l.ExpiresAt)</td>
+                <td>@Fmt.Date(l.MaintenanceUntil)</td>
+                <td>@Fmt.Date(l.CreatedAt)</td>
+            </tr>
+        }
+        @if (Model.Licenses.Count == 0) { <tr><td colspan="8" class="muted">No licences.</td></tr> }
+        </tbody>
+    </table>
+</div>
+
+<h2>Payments</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Date</th><th>Provider</th><th>Reference</th><th>Amount</th><th>Status</th><th>Licence</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model.Payments)
+        {
+            <tr>
+                <td>@Fmt.Time(p.CreatedAt)</td>
+                <td>@p.Provider</td>
+                <td class="mono">@p.ProviderPaymentId</td>
+                <td>@RefractionStudio.Server.Data.Email.EmailTemplates.FormatAmount(p.Amount, p.Currency)</td>
+                <td><span class="badge @p.Status">@p.Status</span></td>
+                <td>@if (p.LicenseId is { } lid) { <a asp-page="/Licenses/Details" asp-route-id="@lid">@Fmt.Short(lid)</a> }</td>
+            </tr>
+        }
+        @if (Model.Payments.Count == 0) { <tr><td colspan="6" class="muted">No payments.</td></tr> }
+        </tbody>
+    </table>
+</div>
+
+<h2>E-mails</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Queued</th><th>Template</th><th>Subject</th><th>Status</th><th>Sent</th></tr></thead>
+        <tbody>
+        @foreach (var m in Model.Emails)
+        {
+            <tr>
+                <td>@Fmt.Time(m.CreatedAt)</td>
+                <td>@m.Template</td>
+                <td>@m.Subject</td>
+                <td><span class="badge @m.Status.ToString().ToLowerInvariant()">@m.Status.ToString().ToLowerInvariant()</span> @if (m.LastError is not null) { <span class="small muted">@m.LastError</span> }</td>
+                <td>@Fmt.Time(m.SentAt)</td>
+            </tr>
+        }
+        @if (Model.Emails.Count == 0) { <tr><td colspan="5" class="muted">No e-mails.</td></tr> }
+        </tbody>
+    </table>
+</div>

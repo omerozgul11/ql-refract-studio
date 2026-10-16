@@ -1,0 +1,154 @@
+@page "{id:guid}"
+@model RefractionStudio.AdminPortal.Pages.Licenses.DetailsModel
+@{
+    var l = Model.License;
+    ViewData["Title"] = "Licence …" + l.KeyHint;
+    var inUse = Model.Activations.Count(a => a.DeactivatedAt == null);
+}
+<div class="toolbar">
+    <h1>Licence <span class="mono">…@l.KeyHint</span> <span class="badge @Fmt.Status(l.Status)">@Fmt.Status(l.Status)</span></h1>
+</div>
+@if (Model.ReplacementKey is not null)
+{
+    <div class="panel">
+        <h2>New key</h2>
+        <p>The previous key no longer works. <strong>This key is shown only once.</strong></p>
+        <div class="key-reveal" id="license-key">@Model.ReplacementKey</div>
+    </div>
+}
+<div class="grid">
+    <div class="panel">
+        <dl class="facts">
+            <dt>Customer</dt><dd><a asp-page="/Customers/Details" asp-route-id="@l.CustomerId">@l.Customer!.DisplayName</a> <span class="muted small">@l.Customer!.Email</span></dd>
+            <dt>Licence id</dt><dd class="mono">@l.Id</dd>
+            <dt>Product</dt><dd>@l.Product — @l.Edition</dd>
+            <dt>Seats in use</dt><dd>@inUse of @l.SeatCount</dd>
+            <dt>Created</dt><dd>@Fmt.Time(l.CreatedAt)</dd>
+            <dt>Expires</dt><dd>@Fmt.Expiry(l.ExpiresAt)</dd>
+            <dt>Maintenance until</dt><dd>@Fmt.Date(l.MaintenanceUntil)</dd>
+            <dt>Transfers (30 days)</dt><dd>@Model.TransfersLast30Days of @l.MaxTransfersPer30Days allowed</dd>
+            <dt>Offline days</dt><dd>@l.OfflineDays</dd>
+            <dt>Features</dt><dd>@(l.Features.Count == 0 ? "—" : string.Join(", ", l.Features))</dd>
+            @if (l.StatusReason is not null) { <dt>Status reason</dt><dd>@l.StatusReason</dd> }
+            @foreach (var p in Model.Payments) { <dt>Payment</dt><dd class="mono">@p.Provider @p.ProviderPaymentId (@p.Status)</dd> }
+        </dl>
+    </div>
+    @if (Model.CanWrite)
+    {
+        <div class="panel">
+            <form method="post" asp-page-handler="Notes" asp-route-id="@l.Id" class="stack">
+                <label>Internal notes <textarea asp-for="Notes"></textarea></label>
+                <button type="submit" class="secondary">Save notes</button>
+            </form>
+        </div>
+    }
+</div>
+
+@if (Model.CanWrite)
+{
+    <h2>Actions</h2>
+    <div class="actions">
+        @if (l.Status == LicenseRecordStatus.Active)
+        {
+            <form method="post" asp-page-handler="Suspend" asp-route-id="@l.Id">
+                <h3>Suspend</h3>
+                <label>Reason <input asp-for="Reason" /></label>
+                <p class="small muted">Temporarily blocks activation and validation.</p>
+                <button type="submit" class="secondary">Suspend licence</button>
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-page-handler="Reinstate" asp-route-id="@l.Id">
+                <h3>Reinstate</h3>
+                <label>Reason <input asp-for="Reason" /></label>
+                <button type="submit">Reinstate licence</button>
+            </form>
+        }
+        @if (l.Status != LicenseRecordStatus.Revoked)
+        {
+            <form method="post" asp-page-handler="Revoke" asp-route-id="@l.Id">
+                <h3>Revoke</h3>
+                <label>Reason <input asp-for="Reason" required /></label>
+                <p class="small muted">Permanently invalidates the licence (refund, abuse).</p>
+                <button type="submit" class="danger">Revoke licence</button>
+            </form>
+        }
+        <form method="post" asp-page-handler="Extend" asp-route-id="@l.Id">
+            <h3>Extend / renew</h3>
+            <label>New expiry date <input asp-for="NewExpiresOn" type="date" /></label>
+            <label class="check"><input asp-for="Perpetual" type="checkbox" /> Make perpetual</label>
+            <label>New maintenance date <input asp-for="NewMaintenanceUntil" type="date" /></label>
+            <label class="check"><input asp-for="NotifyCustomer" type="checkbox" /> Send renewal e-mail</label>
+            <button type="submit">Save dates</button>
+        </form>
+        <form method="post" asp-page-handler="Limits" asp-route-id="@l.Id">
+            <h3>Override limits</h3>
+            <label>Seats <input asp-for="Seats" type="number" min="1" max="10000" /></label>
+            <label>Transfers per 30 days <input asp-for="MaxTransfers" type="number" min="0" max="1000" /></label>
+            <label>Offline days <input asp-for="OfflineDays" type="number" min="1" max="365" /></label>
+            <button type="submit" class="secondary">Save limits</button>
+        </form>
+        <form method="post" asp-page-handler="ResetActivations" asp-route-id="@l.Id">
+            <h3>Reset activations</h3>
+            <p class="small muted">Deactivates all @inUse computer(s). Does not count against the transfer limit.</p>
+            <button type="submit" class="danger">Deactivate all computers</button>
+        </form>
+        <form method="post" asp-page-handler="ReplaceKey" asp-route-id="@l.Id">
+            <h3>Replace key</h3>
+            <p class="small muted">Issues a new key (lost or leaked key). The old key stops working; activated computers keep working.</p>
+            <label class="check"><input asp-for="SendKeyEmail" type="checkbox" /> E-mail the new key to the customer</label>
+            <button type="submit" class="secondary">Generate new key</button>
+        </form>
+        <form method="post" asp-page-handler="SendInstructions" asp-route-id="@l.Id">
+            <h3>Activation instructions</h3>
+            <p class="small muted">E-mails the activation steps (without the key) to @l.Customer!.Email.</p>
+            <button type="submit" class="secondary">Send instructions</button>
+        </form>
+    </div>
+}
+
+<h2>Activation history</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Computer</th><th>Activated</th><th>Last validated</th><th>App version</th><th>Deactivated</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var a in Model.Activations)
+        {
+            <tr>
+                <td><a asp-page="/Devices/Details" asp-route-id="@a.DeviceId">@(a.Device?.MachineName ?? "(name not shared)")</a> <span class="mono muted">@Fmt.Hash(a.Device?.Fingerprint)</span>
+                    @if (a.Device?.Blocked == true) { <span class="badge blocked">blocked</span> }</td>
+                <td>@Fmt.Time(a.ActivatedAt)</td>
+                <td>@Fmt.Time(a.LastValidatedAt)</td>
+                <td>@(a.AppVersion ?? "—")</td>
+                <td>@if (a.DeactivatedAt is null) { <span class="badge active">active</span> } else { <span>@Fmt.Time(a.DeactivatedAt) <span class="small muted">(@a.DeactivationReason)</span></span> }</td>
+                <td>
+                    @if (a.DeactivatedAt is null && Model.CanWrite)
+                    {
+                        <form method="post" asp-page-handler="Deactivate" asp-route-id="@l.Id" asp-route-activationId="@a.Id" class="inline"><button type="submit" class="small secondary">Deactivate</button></form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Activations.Count == 0) { <tr><td colspan="6" class="muted">Never activated.</td></tr> }
+        </tbody>
+    </table>
+</div>
+
+<h2>Events</h2>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>When</th><th>Event</th><th>By</th><th>Details</th></tr></thead>
+        <tbody>
+        @foreach (var e in Model.Events)
+        {
+            <tr>
+                <td class="small">@Fmt.Time(e.OccurredAt)</td>
+                <td>@e.Type</td>
+                <td class="small">@e.Actor</td>
+                <td><pre class="details">@e.Details</pre></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,32 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Devices.IndexModel
+@{
+    ViewData["Title"] = "Devices";
+}
+<h1>Devices</h1>
+<p class="muted">Computers that have activated a licence. Devices are identified by a salted fingerprint; no hardware identifiers are stored.</p>
+<form method="get" class="row">
+    <label>Search <input type="search" name="q" value="@Model.Query" placeholder="Fingerprint prefix or computer name" /></label>
+    <label class="check"><input type="checkbox" name="blocked" value="true" checked="@Model.BlockedOnly" /> Blocked only</label>
+    <button type="submit" class="secondary">Filter</button>
+</form>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Computer</th><th>Fingerprint</th><th>Product</th><th>Operating system</th><th>Active licences</th><th>First seen</th><th>Last seen</th></tr></thead>
+        <tbody>
+        @foreach (var d in Model.Rows)
+        {
+            <tr>
+                <td><a asp-page="Details" asp-route-id="@d.Id">@(d.MachineName ?? "(name not shared)")</a> @if (d.Blocked) { <span class="badge blocked">blocked</span> }</td>
+                <td class="mono">@Fmt.Hash(d.Fingerprint)</td>
+                <td>@d.Product</td>
+                <td class="small">@(d.OsVersion ?? "—")</td>
+                <td>@d.ActiveActivations</td>
+                <td>@Fmt.Date(d.FirstSeen)</td>
+                <td>@Fmt.Time(d.LastSeen)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<partial name="_Pager" model="Model.Paging" />

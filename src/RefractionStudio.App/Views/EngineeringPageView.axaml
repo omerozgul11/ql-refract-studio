@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:dom="using:RefractionStudio.Domain"
+             x:Class="RefractionStudio.App.Views.EngineeringPageView"
+             x:DataType="vm:EngineeringPageViewModel">
+  <Grid ColumnDefinitions="340,14,*">
+    <!-- Settings -->
+    <ScrollViewer>
+      <StackPanel>
+        <Border Classes="section">
+          <StackPanel>
+            <TextBlock Text="Velocity models" Classes="h3" Margin="0,0,0,4" />
+            <TextBlock Text="Shear-wave (SH) line" Classes="label" />
+            <ComboBox ItemsSource="{Binding ShLines}" SelectedItem="{Binding ShLine}" HorizontalAlignment="Stretch" PlaceholderText="None">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="dom:SurveyLine">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Compressional-wave (P) line" Classes="label" />
+            <ComboBox ItemsSource="{Binding PLines}" SelectedItem="{Binding PLine}" HorizontalAlignment="Stretch" PlaceholderText="None">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="dom:SurveyLine">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Model used" Classes="label" />
+            <ComboBox ItemsSource="{Binding Sources}" SelectedItem="{Binding Source}" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Positions along the line (m)" Classes="label" />
+            <TextBox Text="{Binding Positions}" PlaceholderText="e.g. 30, 70.5, 110" />
+            <TextBlock Text="Profile depth step (m)" Classes="label" />
+            <NumericUpDown Value="{Binding DepthStep}" Minimum="0.1" Maximum="10" Increment="0.5" FormatString="0.##" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Averaging depth for Vs (m)" Classes="label" />
+            <NumericUpDown Value="{Binding TargetDepth}" Minimum="1" Maximum="200" Increment="5" FormatString="0.#" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Additional depth intervals" Classes="label" />
+            <TextBox Text="{Binding CustomIntervals}" PlaceholderText="e.g. 0-10, 5-15" />
+            <CheckBox Content="Allow extrapolation below the model" IsChecked="{Binding AllowExtrapolation}" Margin="0,6,0,0" />
+            <Border Classes="callout review" IsVisible="{Binding ShowExtrapolationWarning}">
+              <TextBlock TextWrapping="Wrap" Classes="caption" Text="Extrapolated values assume the deepest constrained velocity continues downward. They are estimates and are labelled EXTRAPOLATED everywhere." />
+            </Border>
+            <Button Classes="primary" Content="Apply" Command="{Binding ApplySettingsCommand}" Margin="0,8,0,0" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="section">
+          <StackPanel>
+            <TextBlock Text="Density" Classes="h3" Margin="0,0,0,4" />
+            <ComboBox ItemsSource="{Binding DensitySources}" SelectedItem="{Binding DensitySource}" HorizontalAlignment="Stretch" />
+            <StackPanel IsVisible="{Binding DensitySource, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Measured}">
+              <Grid ColumnDefinitions="*,*,*,Auto" Margin="0,6,0,2">
+                <TextBlock Text="Top (m)" Classes="caption" />
+                <TextBlock Grid.Column="1" Text="Bottom (m)" Classes="caption" />
+                <TextBlock Grid.Column="2" Text="ρ (kg/m³)" Classes="caption" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding DensityRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:DensityRow">
+                    <Grid ColumnDefinitions="*,4,*,4,*,Auto" Margin="0,1">
+                      <NumericUpDown Value="{Binding Top}" Minimum="0" Increment="1" FormatString="0.##" ShowButtonSpinner="False" MinWidth="0" />
+                      <NumericUpDown Grid.Column="2" Value="{Binding Bottom}" Minimum="0" Increment="1" FormatString="0.##" ShowButtonSpinner="False" MinWidth="0" />
+                      <NumericUpDown Grid.Column="4" Value="{Binding Density}" Minimum="100" Maximum="5000" Increment="50" FormatString="0" ShowButtonSpinner="False" MinWidth="0" />
+                      <Button Grid.Column="5" Classes="tool" MinWidth="0" Padding="4" Margin="2,0,0,4" ToolTip.Tip="Remove"
+                              Command="{Binding $parent[UserControl].((vm:EngineeringPageViewModel)DataContext).RemoveDensityRowCommand}" CommandParameter="{Binding}">
+                        <PathIcon Data="{StaticResource Icon.Delete}" Width="11" Height="11" />
+                      </Button>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Button Classes="link" Content="+ Add interval" Command="{Binding AddDensityRowCommand}" FontSize="12" Margin="0,4,0,0" />
+            </StackPanel>
+            <StackPanel IsVisible="{Binding DensitySource, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Estimated}">
+              <TextBlock Text="Empirical relation" Classes="label" />
+              <ComboBox ItemsSource="{Binding Estimators}" SelectedItem="{Binding Estimator}" HorizontalAlignment="Stretch" />
+              <TextBlock Classes="caption" TextWrapping="Wrap" Text="Gardner (1974): ρ = 310·Vp^0.25, valid 1500–6100 m/s. Brocher (2005): polynomial, valid 1500–8500 m/s. Not valid for most soils." />
+            </StackPanel>
+            <TextBlock Text="Source of the values / notes" Classes="label" />
+            <TextBox Text="{Binding DensityNotes}" PlaceholderText="e.g. laboratory tests, borehole BH-2" />
+            <Button Classes="primary" Content="Apply density" Command="{Binding ApplyDensityCommand}" Margin="0,6,0,0" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Results -->
+    <Grid Grid.Column="2" RowDefinitions="Auto,*,Auto">
+      <Border Classes="section">
+        <StackPanel>
+          <TextBlock Text="Time-averaged shear-wave velocity" Classes="h3" Margin="0,0,0,2" />
+          <TextBlock Text="{Binding Vs30Message}" Classes="caption" />
+          <ItemsControl ItemsSource="{Binding Vs30Rows}" Margin="0,4,0,0">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <SelectableTextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="13.5" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+      <Grid Grid.Row="1" ColumnDefinitions="2*,10,3*">
+        <DockPanel>
+          <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+            <TextBlock Text="Profile at position no." VerticalAlignment="Center" Classes="muted" Margin="0,0,6,0" />
+            <NumericUpDown Value="{Binding ProfileIndex}" Minimum="0" Maximum="50" Increment="1" FormatString="0" Width="100"
+                           ToolTip.Tip="0 = first position in the list, 1 = second, …" />
+          </WrapPanel>
+          <Border Classes="panel" ClipToBounds="True">
+            <c:PlotView Plot="{Binding ProfilePlot}" />
+          </Border>
+        </DockPanel>
+        <DockPanel Grid.Column="2">
+          <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+            <TextBlock Text="Property section" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,0" />
+            <ComboBox ItemsSource="{Binding Properties}" SelectedItem="{Binding Property}" MinWidth="120" />
+          </WrapPanel>
+          <Grid>
+            <Border Classes="panel" ClipToBounds="True">
+              <c:PlotView Plot="{Binding PropertyPlot}" />
+            </Border>
+            <TextBlock Text="Property sections need tomographic models of both a P and an SH line on the same positions." Classes="muted" TextWrapping="Wrap"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="320" TextAlignment="Center"
+                       IsVisible="{Binding PropertyPlot, Converter={x:Static ObjectConverters.IsNull}}" />
+          </Grid>
+        </DockPanel>
+      </Grid>
+      <Border Grid.Row="2" Classes="section" Margin="0,10,0,0" MaxHeight="260">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="{Binding EngineeringTable.Title, FallbackValue='Engineering parameters'}" Classes="h3" Margin="0,0,0,4" />
+          <TextBlock DockPanel.Dock="Top" Text="{Binding EngineeringMessage}" Classes="caption" Margin="0,0,0,4" />
+          <TextBlock DockPanel.Dock="Bottom" Text="{Binding EngineeringTable.Note, FallbackValue=''}" Classes="caption" Margin="0,4,0,0" />
+          <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <c:TableGrid Table="{Binding EngineeringTable}" />
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

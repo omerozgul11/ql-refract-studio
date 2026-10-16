@@ -1,0 +1,5 @@
+# Deployment secrets never belong in the repository.
+.env
+secrets/
+*.private.pem
+*.pfx

@@ -1,0 +1,201 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:dom="using:RefractionStudio.Domain"
+             x:Class="RefractionStudio.App.Views.VelocityModelPageView"
+             x:DataType="vm:VelocityModelPageViewModel">
+  <Grid>
+    <StackPanel IsVisible="{Binding !HasLine}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+      <PathIcon Data="{StaticResource Icon.Section}" Width="40" Height="40" Foreground="{DynamicResource SecondaryText}" />
+      <TextBlock Text="Import data and pick first breaks to build a velocity model." Classes="muted" />
+    </StackPanel>
+    <Grid ColumnDefinitions="*,12,330" IsVisible="{Binding HasLine}">
+      <!-- ───────────── Plots ───────────── -->
+      <Grid RowDefinitions="Auto,Auto,*,6,*">
+        <WrapPanel>
+          <TextBlock Text="Line" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding Lines}" SelectedItem="{Binding Line}" MinWidth="160" Margin="0,0,12,4">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="dom:SurveyLine">
+                <TextBlock Text="{Binding Name}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Text="Shot" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding Shots}" SelectedItem="{Binding SelectedShot}" MinWidth="120" Margin="0,0,12,4"
+                    ToolTip.Tip="The crossovers of this shot are shown as draggable markers">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="dom:ShotGather">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Text="Layers" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding LayerCounts}" SelectedItem="{Binding LayerCount}" Margin="0,0,8,4" />
+          <Button Classes="secondary" Content="Suggest layer assignment" Command="{Binding SuggestLayersCommand}" Margin="0,0,6,4"
+                  ToolTip.Tip="Fits straight segments to each shot; crossovers you moved are kept" />
+          <Button Classes="secondary" Content="Reset…" Command="{Binding ResetLayersCommand}" Margin="0,0,6,4" />
+        </WrapPanel>
+
+        <!-- Selected point -->
+        <Border Grid.Row="1" Classes="callout info" Margin="0,0,0,6" IsVisible="{Binding SelectedPointText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+          <WrapPanel>
+            <TextBlock Text="{Binding SelectedPointText}" VerticalAlignment="Center" Margin="0,0,12,0" />
+            <TextBlock Text="Assign to layer:" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,0" />
+            <Button Classes="secondary" Content="1" Command="{Binding AssignSelectedToLayerCommand}" CommandParameter="1" Padding="10,3" Margin="0,0,4,0" />
+            <Button Classes="secondary" Content="2" Command="{Binding AssignSelectedToLayerCommand}" CommandParameter="2" Padding="10,3" Margin="0,0,4,0" />
+            <Button Classes="secondary" Content="3" Command="{Binding AssignSelectedToLayerCommand}" CommandParameter="3" Padding="10,3" Margin="0,0,4,0" />
+            <Button Classes="secondary" Content="4" Command="{Binding AssignSelectedToLayerCommand}" CommandParameter="4" Padding="10,3" Margin="0,0,8,0" />
+            <Button Classes="link" Content="Automatic" Command="{Binding ClearLayerOverrideCommand}" Margin="0,0,10,0" FontSize="12" />
+            <Button Classes="link" Content="Use / exclude" Command="{Binding ToggleSelectedIncludedCommand}" Margin="0,0,10,0" FontSize="12" />
+            <Button Classes="link" Content="Show trace" Command="{Binding OpenSelectedTraceCommand}" FontSize="12" />
+          </WrapPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="panel" ClipToBounds="True">
+          <c:PlotView x:Name="TravelTimes" Plot="{Binding TravelTimes}" />
+        </Border>
+        <GridSplitter Grid.Row="3" ResizeDirection="Rows" Background="Transparent" />
+        <Grid Grid.Row="4" RowDefinitions="Auto,*" ColumnDefinitions="*,Auto">
+          <WrapPanel Grid.ColumnSpan="2" Margin="0,0,0,4">
+            <ComboBox ItemsSource="{Binding Sections}" SelectedItem="{Binding SectionChoice}" MinWidth="150" Margin="0,0,10,0" />
+            <CheckBox Content="Show rays" IsChecked="{Binding ShowRays}" Margin="0,0,14,0" />
+            <TextBlock Text="Vertical exaggeration" VerticalAlignment="Center" Classes="muted" Margin="0,0,6,0" />
+            <NumericUpDown Value="{Binding VerticalExaggeration}" Minimum="0.5" Maximum="10" Increment="0.5" FormatString="0.#" Width="110" />
+          </WrapPanel>
+          <Border Grid.Row="1" Classes="panel" ClipToBounds="True">
+            <c:PlotView Plot="{Binding Section}" />
+          </Border>
+          <Border Grid.Row="1" Grid.Column="1" Classes="panel" ClipToBounds="True" Width="300" Margin="8,0,0,0"
+                  IsVisible="{Binding SecondaryPlot, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <c:PlotView Plot="{Binding SecondaryPlot}" />
+          </Border>
+        </Grid>
+      </Grid>
+
+      <!-- ───────────── Methods ───────────── -->
+      <TabControl Grid.Column="2" Classes="page">
+        <TabItem Header="Layered">
+          <ScrollViewer>
+            <StackPanel>
+              <Border Classes="section">
+                <StackPanel>
+                  <TextBlock Text="Method" Classes="label" Margin="0,0,0,2" />
+                  <ComboBox ItemsSource="{Binding Methods}" SelectedItem="{Binding Method}" HorizontalAlignment="Stretch" />
+                  <TextBlock Classes="caption" TextWrapping="Wrap"
+                             Text="InterceptTime: plane layers under each shot. PlusMinus / GRM: refractor depth under every geophone from reversed shots. DelayTime: least-squares delay times from all shots." />
+                  <TextBlock Text="Forward and reverse shots (PlusMinus, GRM)" Classes="label" />
+                  <Grid ColumnDefinitions="*,6,*">
+                    <ComboBox ItemsSource="{Binding Shots}" SelectedItem="{Binding ForwardShot}" HorizontalAlignment="Stretch" PlaceholderText="Automatic">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="dom:ShotGather">
+                          <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding Shots}" SelectedItem="{Binding ReverseShot}" HorizontalAlignment="Stretch" PlaceholderText="Automatic">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="dom:ShotGather">
+                          <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                  </Grid>
+                  <TextBlock Text="GRM XY distance (m)" Classes="label" />
+                  <Grid ColumnDefinitions="*,Auto">
+                    <NumericUpDown Value="{Binding GrmXy}" Minimum="0" Maximum="100" Increment="0.5" FormatString="0.##" HorizontalAlignment="Stretch" />
+                    <Button Grid.Column="1" Classes="secondary" Content="Analyse XY" Command="{Binding AnalyzeXyCommand}" Margin="6,0,0,4" />
+                  </Grid>
+                  <TextBlock Text="Refractor velocity segments" Classes="label" />
+                  <NumericUpDown Value="{Binding VelocitySegments}" Minimum="1" Maximum="10" Increment="1" FormatString="0" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Velocity smoothing (geophones)" Classes="label" />
+                  <NumericUpDown Value="{Binding VelocitySmoothing}" Minimum="0" Maximum="20" Increment="1" FormatString="0.#" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Fixed layer velocities (m/s)" Classes="label" />
+                  <TextBox Text="{Binding FixedVelocities}" PlaceholderText="e.g. 450, -, -   (- = estimate)" />
+                  <TextBlock Text="Line fitting" Classes="label" />
+                  <ComboBox ItemsSource="{Binding Regressions}" SelectedItem="{Binding Regression}" HorizontalAlignment="Stretch" />
+                  <Button Classes="primary" Content="Apply" Command="{Binding ApplyMethodCommand}" Margin="0,8,0,0" />
+                </StackPanel>
+              </Border>
+              <Border Classes="section">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Result" Classes="h3" Margin="0,0,0,2" />
+                  <ItemsControl ItemsSource="{Binding LayerTexts}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <TextBlock Text="{Binding LayeredStatus}" TextWrapping="Wrap" Classes="muted" />
+                  <ItemsControl ItemsSource="{Binding Warnings}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{Binding StringFormat='▲ {0}'}" TextWrapping="Wrap" Foreground="{DynamicResource ReviewBrush}" Margin="0,2" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <Button Classes="secondary" Content="Check by forward modelling" Command="{Binding ForwardModelCheckCommand}" Margin="0,8,0,0"
+                          ToolTip.Tip="Computes travel times through the layered model by ray tracing and compares them with the picks" />
+                  <TextBlock Text="{Binding ForwardCheck}" TextWrapping="Wrap" Classes="caption" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Tomography">
+          <ScrollViewer>
+            <StackPanel>
+              <Border Classes="section">
+                <StackPanel>
+                  <CheckBox Content="Choose the grid automatically" IsChecked="{Binding AutoGrid}" />
+                  <StackPanel IsVisible="{Binding !AutoGrid}">
+                    <TextBlock Text="Cell size (m)" Classes="label" />
+                    <NumericUpDown Value="{Binding CellSize}" Minimum="0.1" Maximum="20" Increment="0.25" FormatString="0.##" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Model depth (m)" Classes="label" />
+                    <NumericUpDown Value="{Binding MaxDepth}" Minimum="2" Maximum="300" Increment="5" FormatString="0.#" HorizontalAlignment="Stretch" />
+                  </StackPanel>
+                  <TextBlock Text="Starting model" Classes="label" />
+                  <ComboBox ItemsSource="{Binding StartingModels}" SelectedItem="{Binding StartingModel}" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Smoothing (regularisation weight)" Classes="label" />
+                  <NumericUpDown Value="{Binding Smoothing}" Minimum="0.1" Maximum="1000" Increment="5" FormatString="0.#" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Horizontal / vertical smoothing ratio" Classes="label" />
+                  <NumericUpDown Value="{Binding SmoothingRatio}" Minimum="0.1" Maximum="20" Increment="0.5" FormatString="0.#" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Maximum iterations" Classes="label" />
+                  <NumericUpDown Value="{Binding Iterations}" Minimum="1" Maximum="50" Increment="1" FormatString="0" HorizontalAlignment="Stretch" />
+                  <TextBlock Text="Pick uncertainty: absolute (ms) and relative (%)" Classes="label" />
+                  <Grid ColumnDefinitions="*,6,*">
+                    <NumericUpDown Value="{Binding PickErrorMs}" Minimum="0.01" Maximum="20" Increment="0.1" FormatString="0.##" HorizontalAlignment="Stretch" />
+                    <NumericUpDown Grid.Column="2" Value="{Binding PickErrorPercent}" Minimum="0" Maximum="20" Increment="0.5" FormatString="0.#" HorizontalAlignment="Stretch" />
+                  </Grid>
+                  <TextBlock Text="Velocity limits (m/s)" Classes="label" />
+                  <Grid ColumnDefinitions="*,6,*">
+                    <NumericUpDown Value="{Binding MinVelocity}" Minimum="10" Maximum="5000" Increment="50" FormatString="0" HorizontalAlignment="Stretch" />
+                    <NumericUpDown Grid.Column="2" Value="{Binding MaxVelocity}" Minimum="100" Maximum="10000" Increment="250" FormatString="0" HorizontalAlignment="Stretch" />
+                  </Grid>
+                  <CheckBox Content="Down-weight outlying picks (robust)" IsChecked="{Binding Robust}"
+                            ToolTip.Tip="Huber weighting: picks with large residuals get less weight, so isolated errors do not distort the model" />
+                  <Button Classes="primary" Command="{Binding RunTomographyCommand}" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <PathIcon Data="{StaticResource Icon.Play}" Width="12" Height="12" Foreground="{DynamicResource AccentText}" />
+                      <TextBlock Text="Run tomography" />
+                    </StackPanel>
+                  </Button>
+                </StackPanel>
+              </Border>
+              <Border Classes="section">
+                <StackPanel>
+                  <TextBlock Text="Status" Classes="h3" Margin="0,0,0,2" />
+                  <TextBlock Text="{Binding TomographyStatus}" TextWrapping="Wrap" />
+                  <TextBlock Classes="caption" TextWrapping="Wrap" Margin="0,6,0,0"
+                             Text="Cells below the depth of investigation (estimated from the ray coverage of each column) are hatched: velocities there are not constrained by the data." />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </Grid>
+</UserControl>

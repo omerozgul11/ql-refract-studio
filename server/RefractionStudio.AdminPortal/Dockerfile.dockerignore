@@ -1,0 +1,16 @@
+# Used by BuildKit for this Dockerfile (build context = repository root).
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+.git/
+.tools/
+.config/
+tests/
+docs/
+packaging/
+samples/
+tools/
+server/.env
+server/secrets/
+**/*.private.pem

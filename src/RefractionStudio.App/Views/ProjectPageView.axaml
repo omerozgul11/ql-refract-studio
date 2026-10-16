@@ -1,0 +1,169 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:dom="using:RefractionStudio.Domain"
+             x:Class="RefractionStudio.App.Views.ProjectPageView"
+             x:DataType="vm:ProjectPageViewModel">
+  <Grid ColumnDefinitions="3*,16,2*">
+    <!-- Metadata -->
+    <ScrollViewer>
+      <StackPanel>
+        <Border Classes="section">
+          <StackPanel>
+            <TextBlock Text="Project details" Classes="h2" />
+            <Grid ColumnDefinitions="*,12,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+              <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="Project name" Classes="label" />
+                <TextBox Text="{Binding Name}" />
+              </StackPanel>
+              <StackPanel Grid.Row="0" Grid.Column="2">
+                <TextBlock Text="Project number" Classes="label" />
+                <TextBox Text="{Binding ProjectNumber}" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Client" Classes="label" />
+                <TextBox Text="{Binding Client}" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="2">
+                <TextBlock Text="Client contact" Classes="label" />
+                <TextBox Text="{Binding ClientContact}" />
+              </StackPanel>
+              <StackPanel Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="Site name" Classes="label" />
+                <TextBox Text="{Binding SiteName}" />
+              </StackPanel>
+              <StackPanel Grid.Row="2" Grid.Column="2">
+                <TextBlock Text="Survey date" Classes="label" />
+                <DatePicker SelectedDate="{Binding SurveyDate}" HorizontalAlignment="Stretch" />
+              </StackPanel>
+              <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
+                <TextBlock Text="Site address / location" Classes="label" />
+                <TextBox Text="{Binding SiteAddress}" />
+              </StackPanel>
+              <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+                <TextBlock Text="Description and purpose of the survey" Classes="label" />
+                <TextBox Text="{Binding Description}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Text="Field work" Classes="h3" Margin="0,14,0,0" />
+            <Grid ColumnDefinitions="*,12,*" RowDefinitions="Auto,Auto,Auto">
+              <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="Field crew" Classes="label" />
+                <TextBox Text="{Binding FieldCrew}" />
+              </StackPanel>
+              <StackPanel Grid.Row="0" Grid.Column="2">
+                <TextBlock Text="Seismograph" Classes="label" />
+                <TextBox Text="{Binding Instrument}" PlaceholderText="e.g. 24-channel seismograph" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Geophones" Classes="label" />
+                <TextBox Text="{Binding Geophones}" PlaceholderText="e.g. 4.5 Hz vertical / horizontal" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="2">
+                <TextBlock Text="Source" Classes="label" />
+                <TextBox Text="{Binding Source}" PlaceholderText="e.g. 8 kg sledgehammer, SH beam" />
+              </StackPanel>
+              <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                <TextBlock Text="Site conditions (weather, noise, ground)" Classes="label" />
+                <TextBox Text="{Binding Conditions}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48" />
+              </StackPanel>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
+              <Button Classes="primary" Content="Save details" Command="{Binding ApplyMetadataCommand}" IsEnabled="{Binding IsModified}" />
+              <Button Classes="secondary" Content="Revert" Command="{Binding RevertMetadataCommand}" IsEnabled="{Binding IsModified}" />
+              <TextBlock Text="Unsaved edits in this form" Classes="caption" VerticalAlignment="Center" IsVisible="{Binding IsModified}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="section">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Project file" Classes="h2" />
+            <SelectableTextBlock Text="{Binding FileInfo}" TextWrapping="Wrap" Classes="muted" />
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+              <Button Classes="secondary" Content="Duplicate project…" Command="{Binding DuplicateProjectCommand}"
+                      ToolTip.Tip="Save an independent copy of this project under a new name" />
+              <Button Classes="secondary" Content="Archive project…" Command="{Binding ArchiveCommand}"
+                      ToolTip.Tip="Create a ZIP of the last saved project file (original data files embedded) and the audit record. Save first to include recent changes." />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Scenarios, snapshots, history -->
+    <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*">
+      <Border Classes="section">
+        <StackPanel Spacing="4">
+          <TextBlock Text="Analysis scenarios" Classes="h2" />
+          <TextBlock Text="A scenario is an alternative interpretation (picks, layers, settings) of the same data. Switch between them or compare them on the Results page." Classes="caption" />
+          <ListBox ItemsSource="{Binding Scenarios}" SelectedItem="{Binding SelectedScenario}" MaxHeight="150" Margin="0,4">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="dom:AnalysisScenario">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                  <Button Grid.Column="1" Classes="link" Content="Activate" Margin="8,0" FontSize="12"
+                          Command="{Binding $parent[UserControl].((vm:ProjectPageViewModel)DataContext).SwitchScenarioCommand}" CommandParameter="{Binding}" />
+                  <Button Grid.Column="2" Classes="link" Content="Delete" FontSize="12"
+                          Command="{Binding $parent[UserControl].((vm:ProjectPageViewModel)DataContext).DeleteScenarioCommand}" CommandParameter="{Binding}" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding NewScenarioName}" PlaceholderText="Name of the new scenario" />
+            <Button Grid.Column="1" Classes="secondary" Content="Duplicate active" Command="{Binding DuplicateScenarioCommand}" Margin="8,0,0,4" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Row="1" Classes="section">
+        <StackPanel Spacing="4">
+          <TextBlock Text="Snapshots" Classes="h2" />
+          <TextBlock Text="A snapshot records the complete project state so you can return to it later." Classes="caption" />
+          <ItemsControl ItemsSource="{Binding Snapshots}" MaxHeight="140">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="dom:SnapshotHeader">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:g}'}" Classes="caption" />
+                  </StackPanel>
+                  <Button Grid.Column="1" Classes="link" Content="Restore" FontSize="12" VerticalAlignment="Center"
+                          Command="{Binding $parent[UserControl].((vm:ProjectPageViewModel)DataContext).RestoreSnapshotCommand}" CommandParameter="{Binding}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding SnapshotName}" PlaceholderText="Snapshot name" />
+            <Button Grid.Column="1" Classes="secondary" Content="Create snapshot" Command="{Binding CreateSnapshotCommand}" Margin="8,0,0,4" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.Row="2" Classes="section" Margin="0">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" Text="Processing history" Classes="h2" />
+          <TextBlock DockPanel.Dock="Top" Text="Every change is recorded with its parameters, time, user and software version." Classes="caption" Margin="0,0,0,6" />
+          <ListBox ItemsSource="{Binding History}" Background="Transparent">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="dom:HistoryEntry">
+                <StackPanel>
+                  <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+                  <TextBlock Classes="caption">
+                    <Run Text="{Binding Timestamp, StringFormat='{}{0:g}'}" />
+                    <Run Text=" · " />
+                    <Run Text="{Binding User}" />
+                    <Run Text=" · " />
+                    <Run Text="{Binding Kind}" />
+                  </TextBlock>
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

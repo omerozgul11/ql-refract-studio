@@ -1,0 +1,137 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             x:Class="RefractionStudio.App.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <Grid ColumnDefinitions="190,*" RowDefinitions="*,Auto">
+    <ListBox ItemsSource="{Binding Sections}" SelectedItem="{Binding Section}" Classes="nav" Margin="8,0,0,0" />
+    <ScrollViewer Grid.Column="1" Padding="18,0,18,8">
+      <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+        <!-- General -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=General}">
+          <TextBlock Text="Your name (recorded in the processing history and reports)" Classes="label" />
+          <TextBox Text="{Binding UserName}" />
+          <CheckBox Content="Expert mode (all options, no step explanations)" IsChecked="{Binding Expert}" Margin="0,8,0,0" />
+          <TextBlock Text="Recovery checkpoint interval (minutes)" Classes="label" />
+          <NumericUpDown Value="{Binding AutosaveMinutes}" Minimum="1" Maximum="60" Increment="1" FormatString="0" Width="160" HorizontalAlignment="Left" />
+          <TextBlock Classes="caption" Text="Unsaved work is written to a recovery checkpoint at this interval. Your project file is only changed when you save." />
+        </StackPanel>
+
+        <!-- Appearance -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Appearance}">
+          <TextBlock Text="Theme" Classes="label" />
+          <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}" MinWidth="200" />
+          <TextBlock Text="Colour scale for velocity sections" Classes="label" />
+          <ComboBox ItemsSource="{Binding Colormaps}" SelectedItem="{Binding Colormap}" MinWidth="200" />
+          <TextBlock Classes="caption" Text="All colour scales are perceptually uniform; Viridis and Cividis are readable with colour-vision deficiencies." />
+        </StackPanel>
+
+        <!-- Units -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Units}">
+          <TextBlock Text="Display units" Classes="label" />
+          <ComboBox ItemsSource="{Binding UnitSystems}" SelectedItem="{Binding Units}" MinWidth="200" />
+          <TextBlock Text="Elastic moduli" Classes="label" />
+          <ComboBox ItemsSource="{Binding ModulusUnits}" SelectedItem="{Binding ModulusUnit}" MinWidth="200" />
+          <TextBlock Classes="caption" Text="Calculations are always made in SI units; only the display and reports are converted." />
+        </StackPanel>
+
+        <!-- Processing -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter='Processing and picking'}">
+          <TextBlock Text="Default picker for new P-wave lines (SH lines use the SH polarity-divergence picker)" Classes="label" />
+          <ComboBox ItemsSource="{Binding Pickers}" SelectedItem="{Binding DefaultPicker}" MinWidth="220" />
+          <CheckBox Content="Add a causal high-pass filter to new lines" IsChecked="{Binding DefaultCausalHighPass}" Margin="0,8,0,0" />
+          <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding DefaultCausalHighPass}">
+            <NumericUpDown Value="{Binding DefaultHighPassHz}" Minimum="1" Maximum="200" Increment="1" FormatString="0.#" Width="140" />
+            <TextBlock Text="Hz" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Classes="caption" Text="A causal high-pass reduces low-frequency surface waves without creating precursors before the first break." />
+        </StackPanel>
+
+        <!-- Reporting -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Reporting}">
+          <TextBlock Text="Company name" Classes="label" />
+          <TextBox Text="{Binding CompanyName}" />
+          <TextBlock Text="Address" Classes="label" />
+          <TextBox Text="{Binding Address}" AcceptsReturn="True" MinHeight="48" />
+          <Grid ColumnDefinitions="*,10,*">
+            <StackPanel>
+              <TextBlock Text="Phone" Classes="label" />
+              <TextBox Text="{Binding Phone}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="E-mail" Classes="label" />
+              <TextBox Text="{Binding Email}" />
+            </StackPanel>
+          </Grid>
+          <TextBlock Text="Website" Classes="label" />
+          <TextBox Text="{Binding Website}" />
+          <Grid ColumnDefinitions="*,10,*">
+            <StackPanel>
+              <TextBlock Text="Engineer / geophysicist" Classes="label" />
+              <TextBox Text="{Binding EngineerName}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="Registration / licence no." Classes="label" />
+              <TextBox Text="{Binding Registration}" />
+            </StackPanel>
+          </Grid>
+          <TextBlock Text="Page footer" Classes="label" />
+          <TextBox Text="{Binding Footer}" />
+          <TextBlock Text="Logo" Classes="label" />
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Classes="panel" Width="160" Height="60" Padding="4">
+              <Image Source="{Binding LogoBase64, Converter={x:Static c:Base64ImageConverter.Instance}}" Stretch="Uniform" />
+            </Border>
+            <StackPanel Spacing="4" VerticalAlignment="Center">
+              <Button Classes="secondary" Content="Choose image…" Command="{Binding ChooseLogoCommand}" />
+              <Button Classes="link" Content="Remove" Command="{Binding RemoveLogoCommand}" IsVisible="{Binding HasLogo}" FontSize="12" />
+            </StackPanel>
+          </StackPanel>
+          <TextBlock Text="Paper size" Classes="label" />
+          <ComboBox ItemsSource="{Binding Papers}" SelectedItem="{Binding Paper}" MinWidth="160" />
+        </StackPanel>
+
+        <!-- License -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=License}" Spacing="6">
+          <TextBlock TextWrapping="Wrap" Text="Licence status, activation and deactivation are managed in the licence panel." />
+          <Button Classes="secondary" Content="Open the licence panel" HorizontalAlignment="Left"
+                  Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenLicenseCommand}" />
+          <CheckBox Content="Send this computer's name when activating (helps you recognise it later)" IsChecked="{Binding SendMachineName}" />
+          <TextBlock Text="Licence server" Classes="label" />
+          <TextBox Text="{Binding LicenseServer}" />
+          <TextBlock Classes="caption" Text="Only change this if instructed by support. Activation sends the licence key, an anonymous device identifier and the application version." />
+        </StackPanel>
+
+        <!-- Updates -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Updates}">
+          <TextBlock Text="Updates" Classes="label" />
+          <ComboBox ItemsSource="{Binding UpdateModes}" SelectedItem="{Binding UpdateMode}" MinWidth="200" />
+          <TextBlock Text="Channel" Classes="label" />
+          <ComboBox ItemsSource="{Binding Channels}" SelectedItem="{Binding Channel}" MinWidth="200" />
+          <Button Classes="secondary" Content="Check now" Command="{Binding CheckUpdatesCommand}" Margin="0,8,0,0" />
+          <TextBlock Classes="caption" Text="Updates are downloaded over HTTPS and verified (signed manifest, SHA-256 checksum and code signature) before installation. Nothing is installed without your confirmation." />
+        </StackPanel>
+
+        <!-- Advanced -->
+        <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Advanced}" Spacing="4">
+          <CheckBox Content="Detailed logging (for troubleshooting)" IsChecked="{Binding VerboseLogging}" />
+          <TextBlock Classes="caption" TextWrapping="Wrap" Text="Refraction Studio sends no usage statistics. It contacts QuakeLogic only for licence activation and checks, and for update checks." />
+          <TextBlock Text="Application data folder" Classes="label" />
+          <SelectableTextBlock Text="{Binding DataFolder}" Classes="mono" TextWrapping="Wrap" />
+          <Button Classes="secondary" Content="Export diagnostic package…" Command="{Binding ExportDiagnosticsCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" />
+          <TextBlock Classes="caption" Text="Creates a ZIP with logs and system information for support. Nothing is sent automatically." />
+          <TextBlock Classes="caption" Margin="0,8,0,0">
+            <Run Text="Privacy policy: " /><Run Text="{Binding PrivacyUrl}" />
+          </TextBlock>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+    <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="18,10">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="{Binding Message}" Classes="caption" VerticalAlignment="Center" />
+        <Button Grid.Column="1" Classes="primary" Content="Save settings" Command="{Binding ApplyCommand}" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

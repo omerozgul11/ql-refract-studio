@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             x:Class="RefractionStudio.App.Views.QcPageView"
+             x:DataType="vm:QcPageViewModel">
+  <DockPanel>
+    <!-- Verdict -->
+    <Border DockPanel.Dock="Top" Classes="card" Margin="0,0,0,10"
+            Classes.ok="{Binding VerdictClass, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=ok}"
+            Classes.review="{Binding VerdictClass, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=review}"
+            Classes.problem="{Binding VerdictClass, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=problem}">
+      <Grid ColumnDefinitions="Auto,*">
+        <PathIcon Data="{Binding VerdictIcon, Converter={x:Static c:ResourceKeyConverter.Instance}}" Width="26" Height="26" Margin="0,0,14,0" VerticalAlignment="Top" />
+        <StackPanel Grid.Column="1" Spacing="2">
+          <TextBlock Text="{Binding Verdict}" FontSize="18" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding VerdictReasons}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Cards -->
+    <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Cards}" Margin="0,0,0,10">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:QcCardRow">
+          <Border Classes="card" Width="230" Margin="0,0,8,8" BorderThickness="3,1,1,1" ToolTip.Tip="{Binding Card.Detail}"
+                  Classes.ok="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=ok}"
+                  Classes.review="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=review}"
+                  Classes.problem="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=problem}">
+            <StackPanel Spacing="2">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Data="{Binding Icon, Converter={x:Static c:ResourceKeyConverter.Instance}}" Width="12" Height="12" />
+                <TextBlock Text="{Binding Card.Title}" Classes="caption" FontWeight="SemiBold" />
+              </StackPanel>
+              <TextBlock Text="{Binding Card.Value}" Classes="value" TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="{Binding Card.Detail}" Classes="caption" MaxLines="2" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <!-- Findings -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,6">
+      <TextBlock Text="Findings" Classes="h2" VerticalAlignment="Center" Margin="0" />
+      <ComboBox Grid.Column="2" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}" MinWidth="160" />
+    </Grid>
+    <Grid ColumnDefinitions="*,12,340">
+      <ListBox x:Name="FindingList" ItemsSource="{Binding Findings}" SelectedItem="{Binding Selected}" Background="{DynamicResource PanelBackground}"
+               BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:QcRow">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+              <PathIcon Data="{Binding Icon, Converter={x:Static c:ResourceKeyConverter.Instance}}" Width="13" Height="13" Margin="0,2,10,0" VerticalAlignment="Top"
+                        Classes.bad="{Binding Level, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter='Likely problem'}"
+                        Classes.warn="{Binding Level, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Review}"
+                        Classes.ok="{Binding Level, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=OK}" />
+              <StackPanel Grid.Column="1">
+                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Classes="muted" />
+              </StackPanel>
+              <TextBlock Grid.Column="2" Text="{Binding LineName}" Classes="caption" Margin="10,0,0,0" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <Border Grid.Column="2" Classes="section" VerticalAlignment="Top">
+        <StackPanel Spacing="6">
+          <TextBlock Text="Selected finding" Classes="h3" Margin="0" />
+          <TextBlock Text="Select a finding to see what to check." Classes="muted" IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNull}}" />
+          <StackPanel Spacing="4" IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <TextBlock Text="{Binding Selected.Title, FallbackValue=''}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Selected.Level, FallbackValue=''}" Classes="caption" />
+            <TextBlock Text="{Binding Selected.Message, FallbackValue=''}" TextWrapping="Wrap" />
+            <Button Classes="primary" Content="Show in the data" Command="{Binding GoToCommand}" CommandParameter="{Binding Selected}" Margin="0,6,0,0"
+                    ToolTip.Tip="Opens the page, shot and trace the finding refers to (or double-click the finding)" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </DockPanel>
+</UserControl>

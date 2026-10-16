@@ -1,0 +1,56 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Admins.IndexModel
+@{
+    ViewData["Title"] = "Admin users";
+}
+<h1>Admin users</h1>
+<p class="muted">Administrators manage everything including releases and accounts; support staff manage customers, licences, trials and devices; viewers have read-only access.</p>
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>Account</th><th>Role</th><th>Status</th><th>Last sign-in</th><th>Actions</th></tr></thead>
+        <tbody>
+        @foreach (var u in Model.Users)
+        {
+            var locked = u.LockedUntil > Model.Now;
+            <tr>
+                <td>@u.DisplayName<br /><span class="small muted">@u.Email</span></td>
+                <td>
+                    <form method="post" asp-page-handler="Role" asp-route-userId="@u.Id" class="row">
+                        <select name="role">@foreach (var r in AdminRoles.All) { <option value="@r" selected="@(r == u.Role)">@r</option> }</select>
+                        <button type="submit" class="small secondary">Set</button>
+                    </form>
+                </td>
+                <td>
+                    @if (u.Disabled) { <span class="badge revoked">disabled</span> }
+                    else if (locked) { <span class="badge suspended">locked until @Fmt.Time(u.LockedUntil)</span> }
+                    else { <span class="badge active">active</span> }
+                </td>
+                <td>@Fmt.Time(u.LastLoginAt)</td>
+                <td>
+                    @if (locked)
+                    {
+                        <form method="post" asp-page-handler="Unlock" asp-route-userId="@u.Id" class="inline"><button type="submit" class="small">Unlock</button></form>
+                    }
+                    <form method="post" asp-page-handler="Disable" asp-route-userId="@u.Id" asp-route-disabled="@(!u.Disabled)" class="inline">
+                        <button type="submit" class="small @(u.Disabled ? "" : "danger")">@(u.Disabled ? "Enable" : "Disable")</button>
+                    </form>
+                    <form method="post" asp-page-handler="ResetPassword" asp-route-userId="@u.Id" class="row">
+                        <input type="password" name="newPassword" placeholder="New password (12+)" minlength="12" autocomplete="new-password" required />
+                        <button type="submit" class="small secondary">Reset password</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<h2>New account</h2>
+<div class="panel">
+    <form method="post" asp-page-handler="Create" class="stack">
+        <label>E-mail <input asp-for="Email" type="email" required /></label>
+        <label>Name <input asp-for="DisplayName" required /></label>
+        <label>Initial password <span class="hint">(at least 12 characters; ask the user to change it)</span><input asp-for="Password" type="password" autocomplete="new-password" required minlength="12" /></label>
+        <label>Role <select asp-for="Role">@foreach (var r in AdminRoles.All) { <option value="@r">@r</option> }</select></label>
+        <button type="submit">Create account</button>
+    </form>
+</div>

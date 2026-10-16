@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RefractionStudio.App.ViewModels"
+             xmlns:c="using:RefractionStudio.App.Controls"
+             xmlns:dom="using:RefractionStudio.Domain"
+             x:Class="RefractionStudio.App.Views.GatherViewerView"
+             x:DataType="vm:GatherViewerViewModel">
+  <DockPanel>
+    <!-- Viewer toolbar -->
+    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+      <ComboBox ItemsSource="{Binding Lines}" SelectedItem="{Binding Line}" MinWidth="150" Margin="0,0,6,4" ToolTip.Tip="Survey line">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="dom:SurveyLine">
+            <TextBlock Text="{Binding Name}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <Button Command="{Binding PreviousGatherCommand}" ToolTip.Tip="Previous shot (Page Up)" Margin="0,0,2,4" Padding="8,5">
+        <PathIcon Data="{StaticResource Icon.Up}" Width="12" Height="12">
+          <PathIcon.RenderTransform><RotateTransform Angle="-90" /></PathIcon.RenderTransform>
+        </PathIcon>
+      </Button>
+      <ComboBox x:Name="GatherBox" ItemsSource="{Binding Gathers}" SelectedItem="{Binding Gather}" MinWidth="150" Margin="0,0,2,4" ToolTip.Tip="Shot gather">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="dom:ShotGather">
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <Button Command="{Binding NextGatherCommand}" ToolTip.Tip="Next shot (Page Down)" Margin="0,0,10,4" Padding="8,5">
+        <PathIcon Data="{StaticResource Icon.Up}" Width="12" Height="12">
+          <PathIcon.RenderTransform><RotateTransform Angle="90" /></PathIcon.RenderTransform>
+        </PathIcon>
+      </Button>
+      <ComboBox ItemsSource="{Binding Views}" SelectedItem="{Binding WaveformView}" MinWidth="110" Margin="0,0,6,4" ToolTip.Tip="Show processed, original (raw) or both" />
+      <ComboBox ItemsSource="{Binding Modes}" SelectedItem="{Binding Mode}" MinWidth="150" Margin="0,0,6,4" ToolTip.Tip="Trace display" />
+      <ComboBox ItemsSource="{Binding Scalings}" SelectedItem="{Binding Scaling}" MinWidth="100" Margin="0,0,10,4" ToolTip.Tip="Per-trace or common amplitude scaling" />
+      <StackPanel Orientation="Horizontal" Margin="0,0,10,4" Height="32">
+        <TextBlock Text="Gain" VerticalAlignment="Center" Classes="muted" Margin="0,0,4,0" />
+        <Slider Minimum="0.1" Maximum="8" Value="{Binding Gain}" Width="90" VerticalAlignment="Center" ToolTip.Tip="Display gain (does not change the data)" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,0,10,4" Height="32">
+        <TextBlock Text="Clip" VerticalAlignment="Center" Classes="muted" Margin="0,0,4,0" />
+        <Slider Minimum="0.3" Maximum="6" Value="{Binding Clip}" Width="70" VerticalAlignment="Center" ToolTip.Tip="Maximum trace excursion in geophone spacings" />
+      </StackPanel>
+      <TextBox Text="{Binding ReductionVelocity}" PlaceholderText="Reduction m/s" Width="120" Margin="0,0,0,4" VerticalAlignment="Center"
+               ToolTip.Tip="Linear move-out: displays t − |offset| / V. Picks are always stored in true time." />
+    </WrapPanel>
+    <TextBlock DockPanel.Dock="Top" Text="{Binding ViewLabel}" Classes="caption" Margin="2,0,0,4" />
+    <Border DockPanel.Dock="Top" Classes="callout review" IsVisible="{Binding Problems, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <PathIcon Data="{StaticResource Icon.Warning}" Width="14" Height="14" Foreground="{DynamicResource ReviewBrush}" />
+        <TextBlock Text="{Binding Problems}" TextWrapping="Wrap" />
+      </StackPanel>
+    </Border>
+    <TextBlock DockPanel.Dock="Bottom" Text="{Binding HoverText}" Classes="caption" Margin="2,4,0,0" MinHeight="16" />
+    <Grid>
+      <Border Classes="panel" ClipToBounds="True">
+        <c:PlotView x:Name="Plot" Plot="{Binding Plot}" />
+      </Border>
+      <StackPanel IsVisible="{Binding !HasGather}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8" MaxWidth="420">
+        <PathIcon Data="{StaticResource Icon.Waveform}" Width="40" Height="40" Foreground="{DynamicResource SecondaryText}" />
+        <TextBlock Text="{Binding EmptyMessage}" TextWrapping="Wrap" TextAlignment="Center" Classes="muted" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

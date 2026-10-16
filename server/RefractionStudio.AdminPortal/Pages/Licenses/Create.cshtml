@@ -1,0 +1,47 @@
+@page
+@model RefractionStudio.AdminPortal.Pages.Licenses.CreateModel
+@{
+    ViewData["Title"] = "New licence";
+}
+<h1>New licence</h1>
+@if (Model.CreatedKey is not null && Model.Created is not null)
+{
+    <div class="panel">
+        <h2>Licence created</h2>
+        <p>This is the full licence key. <strong>It is shown only once</strong>: the server stores a one-way fingerprint of it and cannot display it again.
+            @if (Model.SendKeyEmail) { <span>It has also been queued for e-mail to @Model.Email.</span> }</p>
+        <div class="key-reveal" id="license-key">@Model.CreatedKey</div>
+        <p><a class="button" asp-page="Details" asp-route-id="@Model.Created.Id">Open the licence</a> <a asp-page="Create">Create another</a></p>
+    </div>
+}
+else
+{
+    @if (Model.Error is not null)
+    {
+        <div class="flash error" role="alert">@Model.Error</div>
+    }
+    <div class="panel">
+        <form method="post" class="stack">
+            <h3>Customer</h3>
+            <label>E-mail <span class="hint">(an existing customer is reused)</span><input asp-for="Email" type="email" required /></label>
+            <label>Name <input asp-for="CustomerName" /></label>
+            <label>Company <input asp-for="Company" /></label>
+            <h3>Licence</h3>
+            <label>Product
+                <select asp-for="Product">
+                    @foreach (var p in Model.Products) { <option value="@p.Code">@p.Name</option> }
+                </select>
+            </label>
+            <label>Edition <span class="hint">(blank = product default)</span><input asp-for="Edition" placeholder="Professional" /></label>
+            <label>Seats (computers active at the same time) <input asp-for="Seats" type="number" min="1" max="10000" required /></label>
+            <label>Expires on <span class="hint">(blank = perpetual)</span><input asp-for="ExpiresOn" type="date" /></label>
+            <label>Updates included until <input asp-for="MaintenanceUntil" type="date" /></label>
+            <label>Features <span class="hint">(comma separated; blank = product defaults)</span><input asp-for="Features" /></label>
+            <label>Self-service transfers per 30 days <input asp-for="MaxTransfers" type="number" min="0" max="1000" /></label>
+            <label>Offline days <input asp-for="OfflineDays" type="number" min="1" max="365" /></label>
+            <label>Internal notes <textarea asp-for="Notes"></textarea></label>
+            <label class="check"><input asp-for="SendKeyEmail" type="checkbox" /> E-mail the licence key and activation instructions to the customer</label>
+            <button type="submit">Create licence</button>
+        </form>
+    </div>
+}
