@@ -66,12 +66,12 @@ public partial class App : Application
         };
     }
 
-    /// <summary>Plots use the same typeface as the user interface (Inter, shipped with the application).</summary>
+    /// <summary>Plots use the same typeface as the user interface (Barlow, the QuakeLogic text face, shipped with the application).</summary>
     private static void LoadPlotFont()
     {
         try
         {
-            using var s = AssetLoader.Open(new Uri("avares://Avalonia.Fonts.Inter/Assets/Inter-Regular.ttf"));
+            using var s = AssetLoader.Open(new Uri("avares://RefractionStudio/Assets/Fonts/Barlow-Regular.ttf"));
             using var ms = new MemoryStream();
             s.CopyTo(ms);
             ms.Position = 0;

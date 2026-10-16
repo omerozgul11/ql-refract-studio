@@ -5,20 +5,39 @@
              x:Class="RefractionStudio.App.Views.StartPageView"
              x:DataType="vm:StartPageViewModel">
   <ScrollViewer>
-    <Grid ColumnDefinitions="*,Auto,*" Margin="24,36">
-      <StackPanel Grid.Column="1" Width="880" Spacing="18">
-        <StackPanel Orientation="Horizontal" Spacing="14">
-          <Image Source="/Assets/app.png" Width="56" Height="56" />
-          <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="Refraction Studio" FontSize="28" FontWeight="SemiBold" />
-            <TextBlock Text="Seismic refraction analysis — P and SH waves, layered models, tomography, Vs30 and reporting" Classes="muted" />
-          </StackPanel>
-        </StackPanel>
+    <StackPanel>
+      <!-- ───────────── QuakeLogic hero band ───────────── -->
+      <Border Background="{DynamicResource HeaderBackground}" Padding="0,34,0,38">
+        <Grid ColumnDefinitions="*,Auto,*">
+          <Grid Grid.Column="1" Width="920" ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="6" VerticalAlignment="Center">
+              <Image Source="/Assets/Brand/quakelogic-logo-white.png" Height="20" HorizontalAlignment="Left" Margin="0,0,0,22" />
+              <TextBlock Text="Refraction Studio" FontFamily="{DynamicResource BrandLabelFont}" FontSize="46" FontWeight="SemiBold"
+                         Foreground="{DynamicResource HeaderForeground}" />
+              <TextBlock Text="SEISMIC REFRACTION ANALYSIS · P AND SH WAVES" FontFamily="{DynamicResource BrandLabelFont}" FontSize="14"
+                         LetterSpacing="2.2" Foreground="{DynamicResource BrandOrangeBrush}" />
+              <TextBlock Text="From field records to a finished report: picking, layered models, tomography, Vs30 and quality control."
+                         Foreground="{DynamicResource HeaderMuted}" FontSize="15" TextWrapping="Wrap" MaxWidth="520" HorizontalAlignment="Left" Margin="0,6,0,0" />
+            </StackPanel>
+            <!-- What the product does: refracted ray from the source to the geophones -->
+            <Canvas Grid.Column="1" Width="320" Height="170" VerticalAlignment="Center" Margin="24,0,0,0">
+              <Line StartPoint="0,52" EndPoint="320,52" Stroke="#FFFFFF" StrokeThickness="2" />
+              <Line StartPoint="0,138" EndPoint="320,138" Stroke="#58595B" StrokeThickness="2" StrokeDashArray="4,3" />
+              <TextBlock Canvas.Left="236" Canvas.Top="144" Text="REFRACTOR" FontFamily="{DynamicResource BrandLabelFont}" FontSize="10" LetterSpacing="1.5" Foreground="#77787B" />
+              <Polyline Points="30,52 74,138 238,138 282,52" Stroke="{DynamicResource BrandOrangeBrush}" StrokeThickness="3" StrokeJoin="Round" />
+              <Ellipse Canvas.Left="23" Canvas.Top="38" Width="14" Height="14" Fill="{DynamicResource BrandOrangeBrush}" />
+              <Path Data="M 166,36 L 178,36 L 172,47 Z M 196,36 L 208,36 L 202,47 Z M 226,36 L 238,36 L 232,47 Z M 256,36 L 268,36 L 262,47 Z M 286,36 L 298,36 L 292,47 Z" Fill="#FFFFFF" />
+            </Canvas>
+          </Grid>
+        </Grid>
+      </Border>
 
-        <UniformGrid Columns="4" Margin="0,8,0,0">
+    <Grid ColumnDefinitions="*,Auto,*" Margin="24,28,24,36">
+      <StackPanel Grid.Column="1" Width="920" Spacing="18">
+        <UniformGrid Columns="4">
           <Button Classes="big" Command="{Binding NewProjectCommand}" Margin="0,0,8,0" ToolTip.Tip="Ctrl+N">
             <StackPanel Spacing="6">
-              <PathIcon Data="{StaticResource Icon.New}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" />
+              <PathIcon Data="{StaticResource Icon.New}" Width="22" Height="22" HorizontalAlignment="Left" Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,4" />
               <TextBlock Text="New project" FontWeight="SemiBold" />
               <TextBlock Text="Start an empty project" Classes="caption" />
             </StackPanel>
@@ -97,7 +116,14 @@
             </Button>
           </StackPanel>
         </Grid>
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Classes="caption" Text="QuakeLogic Inc. · 2008 Opportunity Dr., Suite 130, Roseville, CA 95678, USA · +1 (916) 899-0391 · products.quakelogic.net" VerticalAlignment="Center" />
+            <Image Grid.Column="1" Source="/Assets/Brand/quakelogic-logo.png" Height="14" VerticalAlignment="Center" Margin="16,0,0,0" />
+          </Grid>
+        </Border>
       </StackPanel>
     </Grid>
+    </StackPanel>
   </ScrollViewer>
 </UserControl>

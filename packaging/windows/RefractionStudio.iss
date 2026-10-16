@@ -50,6 +50,10 @@ UninstallDisplayName={#AppName}
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+; QuakeLogic branding (images for 100 %, 150 % and 200 % display scaling)
+WizardImageFile=branding\wizard-164.bmp,branding\wizard-246.bmp,branding\wizard-328.bmp
+WizardSmallImageFile=branding\wizard-small-55.bmp,branding\wizard-small-83.bmp,branding\wizard-small-110.bmp
+WizardImageStretch=no
 ChangesAssociations=yes
 CloseApplications=yes
 RestartApplications=yes

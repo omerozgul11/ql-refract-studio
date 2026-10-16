@@ -10,44 +10,77 @@
 
   <Application.Resources>
     <ResourceDictionary>
+      <!-- QuakeLogic typefaces: Barlow for text, Oswald for uppercase section labels. -->
+      <FontFamily x:Key="BrandFont">avares://RefractionStudio/Assets/Fonts#Barlow</FontFamily>
+      <FontFamily x:Key="BrandLabelFont">avares://RefractionStudio/Assets/Fonts#Oswald</FontFamily>
+      <FontFamily x:Key="MonoFont">Consolas, Menlo, DejaVu Sans Mono, monospace</FontFamily>
+
+      <!-- QuakeLogic brand colours -->
+      <Color x:Key="BrandOrange">#ED6A23</Color>
+      <Color x:Key="BrandOrangeDeep">#E1590F</Color>
+      <Color x:Key="BrandNearBlack">#151517</Color>
+      <Color x:Key="BrandInk">#231F20</Color>
+      <SolidColorBrush x:Key="HeaderBackground" Color="#151517" />
+      <SolidColorBrush x:Key="HeaderForeground" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="HeaderMuted" Color="#A3A4A7" />
+      <SolidColorBrush x:Key="HeaderHover" Color="#2A2A2E" />
+      <SolidColorBrush x:Key="HeaderDivider" Color="#333338" />
+      <SolidColorBrush x:Key="BrandOrangeBrush" Color="#ED6A23" />
+
       <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-          <SolidColorBrush x:Key="AppBackground" Color="#F4F6F8" />
+          <SolidColorBrush x:Key="AppBackground" Color="#F5F5F7" />
+          <SolidColorBrush x:Key="SidebarBackground" Color="#EEEEF0" />
           <SolidColorBrush x:Key="PanelBackground" Color="#FFFFFF" />
-          <SolidColorBrush x:Key="SubtleBackground" Color="#EEF1F4" />
-          <SolidColorBrush x:Key="HoverBackground" Color="#E6EBF0" />
-          <SolidColorBrush x:Key="SelectedBackground" Color="#DCEAF7" />
-          <SolidColorBrush x:Key="BorderBrush" Color="#D9DEE4" />
-          <SolidColorBrush x:Key="PrimaryText" Color="#1F2328" />
-          <SolidColorBrush x:Key="SecondaryText" Color="#5F6770" />
-          <SolidColorBrush x:Key="AccentBrush" Color="#0B5C9E" />
+          <SolidColorBrush x:Key="SubtleBackground" Color="#F3F3F4" />
+          <SolidColorBrush x:Key="HoverBackground" Color="#E9E9EC" />
+          <SolidColorBrush x:Key="SelectedBackground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="BorderBrush" Color="#E3E3E5" />
+          <SolidColorBrush x:Key="StrongBorderBrush" Color="#CFCFD3" />
+          <SolidColorBrush x:Key="PrimaryText" Color="#231F20" />
+          <SolidColorBrush x:Key="SecondaryText" Color="#6E6F72" />
+          <SolidColorBrush x:Key="MutedText" Color="#77787B" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#ED6A23" />
+          <SolidColorBrush x:Key="AccentTextBrush" Color="#B9500F" />
           <SolidColorBrush x:Key="AccentText" Color="#FFFFFF" />
-          <SolidColorBrush x:Key="OkBrush" Color="#1A7F37" />
-          <SolidColorBrush x:Key="ReviewBrush" Color="#9A6700" />
+          <SolidColorBrush x:Key="PrimaryButtonBackground" Color="#231F20" />
+          <SolidColorBrush x:Key="PrimaryButtonHover" Color="#000000" />
+          <SolidColorBrush x:Key="PrimaryButtonForeground" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="OkBrush" Color="#1E8449" />
+          <SolidColorBrush x:Key="ReviewBrush" Color="#B26A00" />
           <SolidColorBrush x:Key="ProblemBrush" Color="#C42B1C" />
-          <SolidColorBrush x:Key="OkBackground" Color="#E8F5EC" />
-          <SolidColorBrush x:Key="ReviewBackground" Color="#FFF4D6" />
-          <SolidColorBrush x:Key="ProblemBackground" Color="#FDE7E4" />
-          <SolidColorBrush x:Key="InfoBackground" Color="#E8F1FA" />
+          <SolidColorBrush x:Key="OkBackground" Color="#F1F8F3" />
+          <SolidColorBrush x:Key="ReviewBackground" Color="#FDF6EC" />
+          <SolidColorBrush x:Key="ProblemBackground" Color="#FCF1F0" />
+          <SolidColorBrush x:Key="InfoBackground" Color="#F3F3F4" />
+          <SolidColorBrush x:Key="OverlayBackdrop" Color="#66151517" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-          <SolidColorBrush x:Key="AppBackground" Color="#15181C" />
-          <SolidColorBrush x:Key="PanelBackground" Color="#1C2025" />
-          <SolidColorBrush x:Key="SubtleBackground" Color="#23282E" />
-          <SolidColorBrush x:Key="HoverBackground" Color="#2A3037" />
-          <SolidColorBrush x:Key="SelectedBackground" Color="#1E3A57" />
-          <SolidColorBrush x:Key="BorderBrush" Color="#323941" />
-          <SolidColorBrush x:Key="PrimaryText" Color="#E6E8EB" />
-          <SolidColorBrush x:Key="SecondaryText" Color="#9AA2AB" />
-          <SolidColorBrush x:Key="AccentBrush" Color="#4CA8F0" />
-          <SolidColorBrush x:Key="AccentText" Color="#0B1520" />
+          <SolidColorBrush x:Key="AppBackground" Color="#151517" />
+          <SolidColorBrush x:Key="SidebarBackground" Color="#1B1B1E" />
+          <SolidColorBrush x:Key="PanelBackground" Color="#202024" />
+          <SolidColorBrush x:Key="SubtleBackground" Color="#26262B" />
+          <SolidColorBrush x:Key="HoverBackground" Color="#2C2C31" />
+          <SolidColorBrush x:Key="SelectedBackground" Color="#2E2E34" />
+          <SolidColorBrush x:Key="BorderBrush" Color="#323238" />
+          <SolidColorBrush x:Key="StrongBorderBrush" Color="#45454C" />
+          <SolidColorBrush x:Key="PrimaryText" Color="#EDEDEF" />
+          <SolidColorBrush x:Key="SecondaryText" Color="#A3A4A7" />
+          <SolidColorBrush x:Key="MutedText" Color="#8C8D91" />
+          <SolidColorBrush x:Key="AccentBrush" Color="#ED6A23" />
+          <SolidColorBrush x:Key="AccentTextBrush" Color="#F28A52" />
+          <SolidColorBrush x:Key="AccentText" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="PrimaryButtonBackground" Color="#EDEDEF" />
+          <SolidColorBrush x:Key="PrimaryButtonHover" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="PrimaryButtonForeground" Color="#151517" />
           <SolidColorBrush x:Key="OkBrush" Color="#4CC36E" />
-          <SolidColorBrush x:Key="ReviewBrush" Color="#F2C03A" />
+          <SolidColorBrush x:Key="ReviewBrush" Color="#F2B544" />
           <SolidColorBrush x:Key="ProblemBrush" Color="#FF6B5B" />
-          <SolidColorBrush x:Key="OkBackground" Color="#173322" />
-          <SolidColorBrush x:Key="ReviewBackground" Color="#3A3014" />
-          <SolidColorBrush x:Key="ProblemBackground" Color="#3D1C19" />
-          <SolidColorBrush x:Key="InfoBackground" Color="#1A2B3D" />
+          <SolidColorBrush x:Key="OkBackground" Color="#1A2A20" />
+          <SolidColorBrush x:Key="ReviewBackground" Color="#2E2715" />
+          <SolidColorBrush x:Key="ProblemBackground" Color="#331D1B" />
+          <SolidColorBrush x:Key="InfoBackground" Color="#26262B" />
+          <SolidColorBrush x:Key="OverlayBackdrop" Color="#99000000" />
         </ResourceDictionary>
       </ResourceDictionary.ThemeDictionaries>
       <ResourceDictionary.MergedDictionaries>
@@ -57,7 +90,13 @@
   </Application.Resources>
 
   <Application.Styles>
-    <FluentTheme />
+    <FluentTheme>
+      <!-- Standard controls (check boxes, switches, sliders, focus, selection, tabs) use the QuakeLogic orange. -->
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Light" Accent="#FFED6A23" RegionColor="#FFFFFFFF" ErrorText="#FFC42B1C" />
+        <ColorPaletteResources x:Key="Dark" Accent="#FFED6A23" RegionColor="#FF202024" ErrorText="#FFFF6B5B" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     <StyleInclude Source="avares://RefractionStudio/Styles/AppStyles.axaml" />
   </Application.Styles>

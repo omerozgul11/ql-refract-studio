@@ -28,7 +28,7 @@
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="vm:QcCardRow">
-          <Border Classes="card" Width="230" Margin="0,0,8,8" BorderThickness="3,1,1,1" ToolTip.Tip="{Binding Card.Detail}"
+          <Border Classes="card" Width="230" Margin="0,0,8,8" ToolTip.Tip="{Binding Card.Detail}"
                   Classes.ok="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=ok}"
                   Classes.review="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=review}"
                   Classes.problem="{Binding Classes, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=problem}">

@@ -125,6 +125,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         {
             foreach (var p in _pages) p.OnSettingsChanged();
             OnPropertyChanged(nameof(IsExpert));
+            OnPropertyChanged(nameof(IsGuided));
         };
         RefreshLicense();
     }
@@ -167,6 +168,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         get => _ctx.IsExpert;
         set => _ctx.Settings.Update(s => s with { Mode = value ? UserMode.Expert : UserMode.Guided });
     }
+
+    public bool IsGuided => !IsExpert;
+
+    /// <summary>Selects Guided ("guided") or Expert ("expert") mode (segmented control in the header).</summary>
+    [RelayCommand]
+    private void SetMode(string? mode) => IsExpert = string.Equals(mode, "expert", StringComparison.OrdinalIgnoreCase);
 
     partial void OnSelectedNavChanged(NavItemViewModel? value)
     {

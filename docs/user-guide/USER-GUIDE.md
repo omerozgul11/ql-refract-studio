@@ -14,8 +14,8 @@ using the sample project that ships with the application.
 
 | Area | Purpose |
 |---|---|
-| **Toolbar** (top) | Left: start page (application icon), New, Open, Save, Undo, Redo, Import, Export (opens the Results page with the export buttons), Report (opens the Report page). Centre: the project name and its save status. Right: the Guided / Expert switch, Commands (command palette), the licence status (opens the licence panel), Settings and Help. |
-| **Workflow** (left) | The steps of an interpretation. Each step shows its status: ✓ complete, ● in progress, ! needs attention, ○ not started. Click any step at any time; nothing is enforced. |
+| **Header** (top, dark band) | Left: the QuakeLogic logo and product name (click to return to the start page), then New, Open, Save, Undo, Redo, Import, Export (opens the Results page with the export buttons) and Report (opens the Report page). Right: **Search commands** (the command palette), the **Guided / Expert** selector, the licence status (opens the licence panel), Settings and Help. |
+| **Sidebar** (left) | The project name and its save status, then the workflow: the steps of an interpretation. Each step shows its status: ✓ complete, ● in progress, ! needs attention, ○ not started. Click any step at any time; nothing is enforced. |
 | **Workspace** (centre) | Plots, tables and settings of the current step. |
 | **Trace inspector** (right, Waveforms and Picks pages) | Properties of the selected trace (display gain, polarity, exclusion, static time shift, note) and its pick (accept, delete, use / exclude, restore the automatic suggestion, propagate to neighbours). The command palette entry *Toggle inspector panel* hides or shows it. |
 | **Status bar** (bottom) | Messages, progress of long operations (with **Cancel** for operations that can be cancelled), and the application version. |
@@ -23,14 +23,14 @@ using the sample project that ships with the application.
 When you hover over a gather, the line under the plot shows the trace's channel, position, amplitude,
 time, pick and QC findings.
 
-**Command palette — Ctrl+K** (or **Commands** in the toolbar). Type part of a command name and press
+**Command palette — Ctrl+K** (or **Search commands** in the header). Type part of a command name and press
 Enter. The palette lists the file and edit commands (New, Open, Save, Save as, Import, Undo, Redo),
 *Generate report* (opens the Report page), Settings, Licence, Help, *Explore sample project*, the
 Guided / Expert switch, *Toggle inspector panel*, *Go to* any workflow page, and every help topic
 (*Help: …*). It shows up to 14 matches. Settings and exports are not listed; use Settings and the
 Results page.
 
-**Guided / Expert mode** (toolbar switch). Guided mode shows a short guidance box on each page that
+**Guided / Expert mode** (selector in the header). Guided mode shows a short guidance box on each page that
 explains the step; Expert mode hides it. All parameters are available in both modes, and the project
 is the same in both.
 
@@ -297,7 +297,7 @@ Units are chosen in Settings (SI or US customary). Calculations always use SI in
 
 ## 11. Report and exports
 
-**Report** (toolbar, Ctrl+R) opens the Report page. Fill in the report details, choose the sections,
+**Report** (header, Ctrl+R) opens the Report page. Fill in the report details, choose the sections,
 units and paper size, and press **Generate PDF report…**. The report contains: cover, summary,
 reproducibility, project and survey information, geometry, processing and picking methodology, shot
 gathers, travel-time curves, layered model, tomography, velocity profiles, Vs30, engineering
@@ -308,7 +308,7 @@ Branding (company, logo, address, engineer, registration, footer) is entered in 
 **Use my company branding** on the Report page applies it to the project. A **template** on the Report
 page stores the branding and the selected sections for reuse in other projects.
 
-**Export** (toolbar) opens the Results page, where separate buttons write all tables to an Excel
+**Export** (header) opens the Results page, where separate buttons write all tables to an Excel
 workbook (XLSX) or CSV files, the audit record (JSON) and figures (travel-time curves as PNG and SVG;
 layered and tomography sections as PNG and PDF). Every plot can also be exported to PNG, SVG or PDF
 (size, resolution, background and theme) or copied to the clipboard from its right-click menu.
@@ -320,7 +320,7 @@ display units.
 
 ## 12. Licence
 
-The licence panel opens from the licence button in the toolbar (or Settings → License → **Open the
+The licence panel opens from the licence button in the header (or Settings → License → **Open the
 licence panel**). It shows the edition, status, licensed-to, device, key hint, expiry, update
 entitlement and last verification, with **Check now**, **Copy licence information** and **Deactivate
 this computer…**. The device is shown by name only if you allowed sending the computer's name

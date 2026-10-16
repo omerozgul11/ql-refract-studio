@@ -14,6 +14,8 @@ Avalonia                                           MIT                https://gi
   Avalonia.Skia, Avalonia.Themes.Fluent, Avalonia.Win32, Avalonia.X11
 Avalonia.Angle.Windows.Natives (ANGLE)             BSD-3-Clause       https://chromium.googlesource.com/angle/angle
 Inter typeface (in Avalonia.Fonts.Inter)           SIL OFL 1.1        https://github.com/rsms/inter
+Barlow typeface (user interface text)              SIL OFL 1.1        https://github.com/jpt/barlow
+Oswald typeface (section labels)                   SIL OFL 1.1        https://github.com/googlefonts/OswaldFont
 MicroCom.Runtime                                   MIT                https://github.com/kekekeks/MicroCom
 Tmds.DBus.Protocol                                 MIT                https://github.com/tmds/Tmds.DBus
 SkiaSharp, SkiaSharp.NativeAssets.Win32            MIT                https://github.com/mono/SkiaSharp
@@ -71,7 +73,7 @@ APACHE LICENSE 2.0 (SQLitePCLRaw, Serilog)
   writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-SIL OPEN FONT LICENSE 1.1 (Inter)
+SIL OPEN FONT LICENSE 1.1 (Inter, Barlow, Oswald)
 
-  The Inter typeface is licensed under the SIL Open Font License, Version 1.1
-  (https://openfontlicense.org). It is bundled unmodified and is not sold by itself.
+  The Inter, Barlow and Oswald typefaces are licensed under the SIL Open Font License, Version 1.1
+  (https://openfontlicense.org). They are bundled unmodified and are not sold by themselves.

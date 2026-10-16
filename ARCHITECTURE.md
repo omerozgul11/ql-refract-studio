@@ -198,12 +198,16 @@ the viewport (zoom / pan / fit), mouse and keyboard interaction and the export c
 ViewModels hold presentation state only and call `Core` services; there is no science in a
 ViewModel.
 
-Layout: top toolbar (start page, new/open/save, undo/redo, import, export, report; project name and
-save state in the centre; Guided/Expert switch, command palette, licence state, settings and help on
-the right); left workflow navigation with step status; centre workspace; a trace inspector on the
+Layout: a near-black QuakeLogic header (logo and product name returning to the start page;
+new/open/save, undo/redo, import, export, report; command search, Guided/Expert selector, licence
+state, settings and help on the right) with a thin orange rule; a left sidebar with the project name,
+save state and the workflow navigation with step status; centre workspace; a trace inspector on the
 right of the Waveforms and Picks pages (no application-wide inspector); status bar with messages,
 progress and the version. Guided and Expert modes are presentation modes over the same project
-(Expert hides the guidance box; every parameter is available in both). Themes: light, dark, system.
+(Expert hides the guidance box; every parameter is available in both). Themes: light, dark, system. Visual style follows the QuakeLogic house style
+(`Styles/AppStyles.axaml`, tokens in `App.axaml`): Barlow text, Oswald uppercase labels, white surfaces
+with hairline dividers on a light neutral background, near-black header, orange (#ED6A23) used only as
+an accent (selection, focus, key marks).
 
 ## 9. Licensing
 
