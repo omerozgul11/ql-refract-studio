@@ -69,6 +69,20 @@ Settings that must not be published are read from the repository's `.env` (gitig
 | `RS_RELEASE_SIGNING_KEY` | default for `--manifest-key`: path of the release-signing private key (keep it in `.secrets/`) |
 | `RS_DOWNLOAD_BASE_URL` | default for `--download-url`: `<base>/v<version>/RefractionStudio-<version>-win-x64-setup.exe` |
 | `RS_SIGNTOOL_COMMAND` | with `--sign`: passed to ISCC as `/Srssign=<command>` (certificate selection, timestamp server) |
+| `GITHUB_TOKEN`, `GITHUB_REPOSITORY` | `packaging/publish_release.py`: fine-grained token (this repository only, Contents: Read and write) and `owner/name` |
+| `RS_LICENSE_SIGNING_KEY` | licence-signing private key, for issuing internal or offline licences with the CLI |
+
+### Publishing a release on GitHub
+
+```bash
+python3 packaging/package_windows.py --version 1.0.0     # build the installer and signed manifest
+python3 packaging/publish_release.py --version 1.0.0     # create release v1.0.0 and upload
+```
+
+The release gets the versioned installer (referenced by the update manifest), the same file as
+`RefractionStudio-Setup-win-x64.exe` (the README links to
+`releases/latest/download/RefractionStudio-Setup-win-x64.exe`), the `.sha256` file and
+`release-stable.json`. Re-running the script replaces assets with the same names.
 
 The licence server's secrets are separate: `server/.env` and `server/secrets/` (see
 [licensing/LICENSE-SERVER.md](licensing/LICENSE-SERVER.md)).

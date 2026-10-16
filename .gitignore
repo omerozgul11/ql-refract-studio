@@ -19,3 +19,7 @@ secrets/
 *.pfx
 *.p12
 *.snk
+
+# Python caches
+__pycache__/
+*.pyc
