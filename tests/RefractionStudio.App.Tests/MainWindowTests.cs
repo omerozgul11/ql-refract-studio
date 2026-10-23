@@ -110,6 +110,9 @@ public sealed class MainWindowTests
             UiHarness.Pump();
             Assert.Contains(vm.PaletteResults, c => c.Title == "Generate report");
             Assert.DoesNotContain(vm.PaletteResults, c => c.Title == "New project");
+            vm.PaletteQuery = "Go to S picks";
+            UiHarness.Pump();
+            Assert.Equal("Go to S picks", vm.PaletteResults[0].Title);
             UiHarness.Screenshot(window, "palette");
             vm.CloseOverlaysCommand.Execute(null);
             Assert.False(vm.IsPaletteOpen);

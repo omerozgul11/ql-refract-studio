@@ -52,11 +52,15 @@ public class SessionTests
     public void Gesture_is_one_undo_step_and_one_history_entry()
     {
         var s = NewSession();
+        var ended = 0;
+        s.GestureEnded += (_, _) => ended++;
         using (s.BeginGesture("Drag"))
         {
             for (var i = 0; i < 10; i++) s.Execute(Rename("drag " + i));
             Assert.False(s.CanUndo); // not available mid-gesture
         }
+        Assert.Equal(1, ended); // the user interface refreshes Undo here
+        Assert.True(s.CanUndo);
         Assert.Equal("drag 9", s.State.Metadata.Name);
         Assert.Single(s.History);
         s.Undo();

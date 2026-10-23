@@ -196,6 +196,13 @@ public sealed partial class ImportPageViewModel(StudioContext ctx) : PageViewMod
         var options = new ImportOptions(NewLine ? null : TargetLine?.Id, string.IsNullOrWhiteSpace(LineName) ? $"Line {Lines.Count + 1}" : LineName.Trim(),
             WaveType, Profile, (double)Spacing, Grouping, skipFiles, skipTraces);
         var files = Files.Select(f => f.File).ToList();
+        if (Context.State is { } current && Core.Import.ImportService.Importable(current, files, skipFiles).Count == 0)
+        {
+            await Context.Dialogs.ShowAsync("Nothing to import",
+                "All of the selected files are already in this project, were skipped, or could not be read. Choose other files, or clear the list.",
+                MessageKind.Information);
+            return;
+        }
         var plan = await Context.Busy.RunAsync("Importing…", (_, _) => Task.Run(() => Context.Workspace.PrepareImport(files, options)), cancellable: false);
         if (plan is null) return;
         Context.Workspace.ApplyImport(plan);

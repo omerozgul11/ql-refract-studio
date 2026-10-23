@@ -45,6 +45,19 @@ public static class AppInfo
 
     public const string DefaultLicenseServer = "https://licensing.quakelogic.net/";
 
+    /// <summary>
+    /// False: every installation is the full version (no trial, activation or licence checks, and the
+    /// licence screens are hidden). The licensing client, server and tests stay in place; set this to
+    /// true to require a licence again once the licence server is deployed.
+    /// </summary>
+    public static bool LicensingEnforced => false;
+
+    /// <summary>
+    /// Update feed used while the licence server is not deployed: the signed manifests
+    /// (release-&lt;channel&gt;.json) in the download folder of the public GitHub repository.
+    /// </summary>
+    public const string ReleaseFeedUrl = "https://raw.githubusercontent.com/omerozgul11/ql-refract-studio/main/download/";
+
     public const string PrivacyPolicyUrl = "https://www.quakelogic.net/privacy";
 
     public const string SupportUrl = "https://www.quakelogic.net/support";

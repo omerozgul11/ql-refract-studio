@@ -87,6 +87,12 @@ public sealed class ProjectSession
 
     public event EventHandler<StateChangedEventArgs>? StateChanged;
 
+    /// <summary>
+    /// Raised when a gesture ends: its edits already raised <see cref="StateChanged"/>, but undo was
+    /// unavailable until now (<see cref="CanUndo"/> is false while a gesture is open).
+    /// </summary>
+    public event EventHandler? GestureEnded;
+
     /// <summary>Applies an edit. An edit that returns the same state is a no-op (nothing recorded).</summary>
     public void Execute(ProjectEdit edit)
     {
@@ -120,9 +126,12 @@ public sealed class ProjectSession
     private void EndGesture(Gesture g)
     {
         _gesture = null;
-        if (g.Last is null || ReferenceEquals(g.Start, State)) return;
-        PushUndo(g.Start, g.Last.Description);
-        Record(g.Last.Kind, g.Last.Operation, g.Last.Description, g.Last.Parameters);
+        if (g.Last is not null && !ReferenceEquals(g.Start, State))
+        {
+            PushUndo(g.Start, g.Last.Description);
+            Record(g.Last.Kind, g.Last.Operation, g.Last.Description, g.Last.Parameters);
+        }
+        GestureEnded?.Invoke(this, EventArgs.Empty);
     }
 
     public void Undo()

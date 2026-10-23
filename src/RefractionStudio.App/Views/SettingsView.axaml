@@ -116,7 +116,7 @@
         <!-- Advanced -->
         <StackPanel IsVisible="{Binding Section, Converter={x:Static c:EqualsConverter.Instance}, ConverterParameter=Advanced}" Spacing="4">
           <CheckBox Content="Detailed logging (for troubleshooting)" IsChecked="{Binding VerboseLogging}" />
-          <TextBlock Classes="caption" TextWrapping="Wrap" Text="Refraction Studio sends no usage statistics. It contacts QuakeLogic only for licence activation and checks, and for update checks." />
+          <TextBlock Classes="caption" TextWrapping="Wrap" Text="{Binding PrivacyNote}" />
           <TextBlock Text="Application data folder" Classes="label" />
           <SelectableTextBlock Text="{Binding DataFolder}" Classes="mono" TextWrapping="Wrap" />
           <Button Classes="secondary" Content="Export diagnostic package…" Command="{Binding ExportDiagnosticsCommand}" HorizontalAlignment="Left" Margin="0,8,0,0" />

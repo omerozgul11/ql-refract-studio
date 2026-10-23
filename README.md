@@ -10,9 +10,16 @@
 </p>
 
 <p align="center">
-  <b>Download for Windows (64-bit):</b> <a href="https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe">RefractionStudio-Setup-win-x64.exe</a><br>
-  <a href="https://github.com/omerozgul11/ql-refract-studio/releases">All releases and checksums</a> ·
-  <a href="docs/user-guide/USER-GUIDE.md">User guide</a> ·
+  <b>Download for Windows (64-bit):</b> <a href="https://github.com/omerozgul11/ql-refract-studio/raw/main/download/RefractionStudio-1.0.0-win-x64-setup.exe">RefractionStudio-1.0.0-win-x64-setup.exe</a> (61 MB)<br>
+  <b>Client package, everything in one zip:</b> <a href="https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-1.0.0-Client-Package.zip">Refraction-Studio-1.0.0-Client-Package.zip</a>
+  — installer, field guide, training video, user guide, datasheet and example field records
+</p>
+
+<p align="center">
+  <a href="docs/marketing/QuakeLogic-Refraction-Studio-Field-Guide.pdf">Field guide (PDF)</a> ·
+  <a href="https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-Training-1.0.0.mp4">Training video (MP4)</a> ·
+  <a href="docs/marketing/QuakeLogic-Refraction-Studio-User-Guide.pdf">User guide (PDF)</a> ·
+  <a href="docs/marketing/QuakeLogic-Refraction-Studio-Datasheet.pdf">Datasheet (PDF)</a> ·
   <a href="docs/SCIENTIFIC-VALIDATION.md">Scientific validation</a> ·
   <a href="mailto:support@quakelogic.net">Support</a>
 </p>
@@ -25,6 +32,9 @@
 
 * [Overview](#overview)
 * [Download and installation](#download-and-installation)
+* [Client package](#client-package)
+* [Field guide](#field-guide-setting-up-your-equipment)
+* [Training video](#training-video)
 * [Screenshots](#screenshots)
 * [Features](#features)
 * [Documentation](#documentation)
@@ -50,12 +60,13 @@ parameters, review automatic quality checks and produce a branded PDF report.
 
 ## Download and installation
 
-1. Download the installer: **[RefractionStudio-Setup-win-x64.exe](https://github.com/omerozgul11/ql-refract-studio/releases/latest/download/RefractionStudio-Setup-win-x64.exe)**
-   (all versions and SHA-256 checksums are on the [releases page](https://github.com/omerozgul11/ql-refract-studio/releases)).
+1. Download the installer: **[RefractionStudio-1.0.0-win-x64-setup.exe](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/RefractionStudio-1.0.0-win-x64-setup.exe)**
+   ([SHA-256](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/RefractionStudio-1.0.0-win-x64-setup.exe.sha256)), or the complete
+   [client package](#client-package).
 2. Run it and follow the steps. You can install for all users or only for yourself, add a desktop
    shortcut and open `.rfsx` projects with Refraction Studio.
-3. Start Refraction Studio and choose **Start 14-day trial** or activate your licence key. Then try
-   **Explore the sample** on the start page — a complete synthetic P and SH survey.
+3. Start Refraction Studio and try **Explore the sample** on the start page — a complete synthetic P
+   and SH survey.
 
 ### System requirements
 
@@ -68,17 +79,64 @@ parameters, review automatic quality checks and produce a branded PDF report.
 
 ### Licensing
 
-* 14-day trial with all features.
-* Licences are activated per computer and work offline between periodic checks.
-* If a licence lapses, projects still open, display and export; only editing is disabled.
-* Uninstalling keeps your projects, settings and licence.
+* **Full version on every installation:** no trial, no licence key, no activation and no internet
+  connection needed.
+* Uninstalling keeps your projects and settings.
 
 ### Current release (1.0.0)
 
 * The installer is not code-signed yet, so Windows SmartScreen may show "Windows protected your PC".
   Check the SHA-256 checksum on the releases page, then choose *More info → Run anyway*.
-* Online trial start and activation need the QuakeLogic licence service; contact
-  [support@quakelogic.net](mailto:support@quakelogic.net) if activation does not succeed.
+* Update checks read the signed release manifest in this repository's `download/` folder.
+
+## Client package
+
+One zip with everything a new user needs, ready to send to a client:
+**[Refraction-Studio-1.0.0-Client-Package.zip](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-1.0.0-Client-Package.zip)**
+([SHA-256](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-1.0.0-Client-Package.zip.sha256)).
+
+```
+Refraction-Studio-1.0.0-Client-Package/
+  START HERE.txt                            what is inside, install steps, first survey, support
+  1 - Install Refraction Studio/            RefractionStudio-1.0.0-win-x64-setup.exe
+  2 - Field Guide (set up your equipment)/  field guide (PDF)
+  3 - Training Video/                       video (MP4), captions (SRT) and chapter list
+  4 - User Guide/                           the complete illustrated user guide (PDF)
+  5 - Product Datasheet/                    features and technical specifications (PDF)
+  6 - Example field records/                P and SH SEG-2 shot records to practise the import
+  Licence and notices/                      licence agreement and open-source notices
+  SHA256SUMS.txt                            checksums of every file
+```
+
+Right-click the zip, choose **Extract All…**, then open **START HERE.txt**.
+
+## Field guide: setting up your equipment
+
+New to seismic refraction? The field guide covers the equipment list, planning the line and the shot
+layout (end, off-end and interior shots), planting vertical and horizontal geophones, the seismograph
+settings, recording P shots with a plate and SH shots with a shear beam struck from both ends,
+elevations, checklists, a field sheet and troubleshooting, then the analysis in Refraction Studio.
+
+**[Refraction Studio field guide (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-Field-Guide.pdf)**
+
+<p align="center"><a href="docs/marketing/QuakeLogic-Refraction-Studio-Field-Guide.pdf"><img src="docs/marketing/field-guide-preview.png" width="900" alt="Field guide: cover, what refraction measures, planning the line and the shot layout"></a></p>
+
+## Training video
+
+A six-minute narrated walkthrough of the complete workflow in the real application, from a new project
+and the import of P-wave records to tomography, the SH line, Vs30 and the PDF report, with captions.
+
+<p align="center"><a href="https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-Training-1.0.0.mp4"><img src="docs/marketing/training-video-poster.jpg" width="720" alt="Refraction Studio training video"></a></p>
+
+**[Watch or download the training video (MP4)](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-Training-1.0.0.mp4)** ·
+[captions (SRT)](download/Refraction-Studio-Training-1.0.0.srt) ·
+[chapters](download/Refraction-Studio-Training-1.0.0-chapters.txt)
+
+The [user guide (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-User-Guide.pdf) explains every page
+and setting, and the [datasheet (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-Datasheet.pdf)
+summarises the features and specifications:
+
+<p align="center"><a href="docs/marketing/QuakeLogic-Refraction-Studio-Datasheet.pdf"><img src="docs/marketing/datasheet-preview.png" width="700" alt="Refraction Studio datasheet"></a></p>
 
 ## Screenshots
 
@@ -88,6 +146,8 @@ parameters, review automatic quality checks and produce a branded PDF report.
 | **First-break picking** — automatic AIC, STA/LTA, energy-ratio and SH pickers; click, drag or nudge picks with the keyboard. | **Waveforms** — wiggle or variable-area display, gain, clipping, reduction velocity and the amplitude spectrum. |
 | <img src="docs/images/quality-control.png" alt="Quality control"> | <img src="docs/images/engineering.png" alt="Engineering results"> |
 | **Quality control** — reciprocity, trigger errors, segment residuals, dead, noisy and reversed traces, with an overall verdict. | **Engineering** — Vs30 (or another depth), velocity profiles, Poisson's ratio and moduli sections. |
+| <img src="docs/images/import.png" alt="Import with validation"> | <img src="docs/images/sh-picks.png" alt="SH picks"> |
+| **Import** — every file inspected before import; findings with corrections you approve. | **SH lines** — left and right impacts combined, picked with the SH polarity-divergence picker. |
 | <img src="docs/images/start.png" alt="Start page"> | <img src="docs/images/velocity-model-dark.png" alt="Dark theme"> |
 | **Start page** — new, open, import, the sample project and recent projects. | **Light and dark themes** — colour-vision-friendly palettes throughout. |
 
@@ -120,7 +180,10 @@ profiles, Vs30, engineering parameters, QC, warnings and appendices, with your c
 
 ## Documentation
 
-* [User guide](docs/user-guide/USER-GUIDE.md) — the same guide is built into the application (F1).
+* [Field guide (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-Field-Guide.pdf) — equipment, line layout, recording P and SH shots ([source](docs/field-guide/FIELD-GUIDE.md)).
+* [User guide (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-User-Guide.pdf) — the same guide is built into the application (F1) ([source](docs/user-guide/USER-GUIDE.md)).
+* [Datasheet (PDF)](docs/marketing/QuakeLogic-Refraction-Studio-Datasheet.pdf) — features and technical specifications.
+* [Training video (MP4)](https://github.com/omerozgul11/ql-refract-studio/raw/main/download/Refraction-Studio-Training-1.0.0.mp4) — six-minute narrated walkthrough ([how it is made](marketing/training/README.md)).
 * [Scientific validation](docs/SCIENTIFIC-VALIDATION.md) — synthetic cases with known answers and the latest results.
 * [Algorithms](docs/algorithms/) — processing, picking, layer assignment, layered methods, tomography, QC, engineering.
 * [Reports and exports](docs/REPORTING.md) · [File formats](docs/file-formats/) · [Security](docs/SECURITY.md)
@@ -164,7 +227,10 @@ server/                       licence server, admin portal, EF Core data layer, 
 tools/RefractionStudio.Cli    command-line tool (analyze, report, export, sample, validate, keys, sign-manifest)
 tests/                        xUnit v3 test projects (see docs/TESTING.md)
 samples/                      Refraction-Studio-Sample.rfsx (synthetic sample project)
-packaging/                    Windows packaging script, Inno Setup script, EULA, third-party notices
+packaging/                    Windows packaging script, Inno Setup script, EULA, third-party notices, client package
+download/                     published installer, update manifest, client package zip, training video
+marketing/                    PDF documents (documents/), training video (training/), media toolbox (toolbox/)
+testenv/                      local test environment: the Linux build in the browser (noVNC), in Docker
 docs/                         documentation (index below)
 ```
 
@@ -195,7 +261,13 @@ answers; it can be regenerated with
 `dotnet run --project tools/RefractionStudio.Cli -- sample --out samples/Refraction-Studio-Sample.rfsx`.
 In the application, "Explore the sample" on the start page opens a copy of it.
 
-Editing requires a licence or a trial; without one, projects open read-only.
+Version 1.0 is the full version: `AppInfo.LicensingEnforced` is false, so no licence is needed. The
+licensing client, server and tests stay in place for when the licence server is deployed.
+
+**Test in a web browser:** `testenv/start.sh` runs the Linux build of the application in Docker and
+prints the addresses: the application through noVNC on port 50020 and a file browser for test data,
+reports and exports on port 50021 (both on 127.0.0.1; use an SSH tunnel from another computer).
+`testenv/stop.sh` stops it.
 
 ### Full documentation index
 

@@ -148,8 +148,7 @@ public static class ImportInspector
         foreach (var f in files.Where(f => existingHashes.Contains(f.Sha256)))
         {
             issues.Add(new ImportIssue(ImportSeverity.Warning, "already-imported",
-                $"“{f.FileName}” is already part of this project.", $"SHA-256 {f.Sha256}", f.FileName,
-                Fix: new ImportFix(ImportFixKind.SkipFile, "Skip this file", f.FileName)));
+                $"“{f.FileName}” is already part of this project and will not be imported again.", $"SHA-256 {f.Sha256}", f.FileName));
         }
 
         var readable = files.Where(f => f.Decoded is not null).ToList();

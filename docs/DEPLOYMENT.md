@@ -72,7 +72,26 @@ Settings that must not be published are read from the repository's `.env` (gitig
 | `GITHUB_TOKEN`, `GITHUB_REPOSITORY` | `packaging/publish_release.py`: fine-grained token (this repository only, Contents: Read and write) and `owner/name` |
 | `RS_LICENSE_SIGNING_KEY` | licence-signing private key, for issuing internal or offline licences with the CLI |
 
-### Publishing a release on GitHub
+### Publishing in the repository's `download/` folder (current)
+
+Version 1.0 is the full version (`AppInfo.LicensingEnforced` is false: no licence server is needed), and
+the product page links to files committed in `download/`:
+
+```bash
+python3 packaging/package_windows.py --version 1.0.0 \
+  --download-url https://github.com/omerozgul11/ql-refract-studio/raw/main/download/RefractionStudio-1.0.0-win-x64-setup.exe
+marketing/toolbox/run.sh python marketing/documents/build.py     # field guide, user guide, datasheet (docs/marketing)
+# training video: marketing/training/README.md
+python3 packaging/client_package.py --version 1.0.0               # download/Refraction-Studio-1.0.0-Client-Package.zip
+cp artifacts/installer/RefractionStudio-1.0.0-win-x64-setup.exe* artifacts/installer/release-stable.json download/
+```
+
+The application's update check reads `download/release-stable.json` through
+`https://raw.githubusercontent.com/omerozgul11/ql-refract-studio/main/download/` (`AppInfo.ReleaseFeedUrl`);
+the manifest is signed with the release key and its `downloadUrl` points at the installer in the same
+folder. Every file must stay below GitHub's 100 MB limit (`client_package.py` checks the zip).
+
+### Publishing a release on GitHub (alternative)
 
 ```bash
 python3 packaging/package_windows.py --version 1.0.0     # build the installer and signed manifest
@@ -243,7 +262,9 @@ Implemented in `src/RefractionStudio.Infrastructure/Updater.cs` (`UpdateService`
 1. **Check.** The update mode (Settings → Updates) decides when: **Manual** — only when the user
    asks (start page *Check for updates*, or *Settings → Updates → Check now*); **NotifyOnly** — also at
    start-up, and an available update is shown on the start page without downloading anything;
-   **Automatic** — also at start-up, and the application offers to download and install it. The request goes to
+   **Automatic** — also at start-up, and the application offers to download and install it. In the full
+   version (licensing not enforced) the request goes to `release-<channel>.json` in the repository's
+   `download/` folder (see §2). With licensing enforced it goes to
    `api/updates/refraction-studio/<channel>?current=<version>` relative to the configured licence
    server URL (setting *Licence server*, default `https://licensing.quakelogic.net/`; the HTTP client is
    created at start-up, so a changed URL applies after a restart), with the user-agent

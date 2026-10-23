@@ -1,0 +1,239 @@
+1
+00:00:00,300 --> 00:00:04,632
+Welcome to the Refraction Studio training video from QuakeLogic.
+
+2
+00:00:04,632 --> 00:00:13,825
+In about six minutes you will take a set of seismic refraction shot records to a velocity model, Vs30 and a finished report.
+
+3
+00:00:16,525 --> 00:00:19,503
+Refraction Studio opens on the start page.
+
+4
+00:00:19,503 --> 00:00:25,103
+Start a new project, open one, import a survey, or explore the built-in sample:
+
+5
+00:00:25,103 --> 00:00:27,018
+a complete P and SH survey.
+
+6
+00:00:27,018 --> 00:00:32,922
+Everything runs on your own computer, with no account and no activation.
+
+7
+00:00:35,622 --> 00:00:38,194
+Start a new project and describe the site.
+
+8
+00:00:38,194 --> 00:00:42,173
+These details appear on the report cover and in the audit record.
+
+9
+00:00:42,173 --> 00:00:49,255
+The workflow on the left takes you through every step, and each step shows its status.
+
+10
+00:00:49,555 --> 00:00:55,129
+On the Import page, choose files or a whole folder of SEG-2 or SEG-Y records.
+
+11
+00:00:55,129 --> 00:00:58,676
+Every file is inspected before anything is added:
+
+12
+00:00:58,676 --> 00:01:05,629
+the format, the traces, the sample interval and the source position from the headers.
+
+13
+00:01:05,929 --> 00:01:08,314
+Validation lists anything unusual.
+
+14
+00:01:08,314 --> 00:01:13,856
+Here channel 30 of one shot is flat, so its geophone was probably disconnected.
+
+15
+00:01:13,856 --> 00:01:15,890
+Nothing is repaired silently:
+
+16
+00:01:15,890 --> 00:01:19,047
+tick the correction you approve, then import.
+
+17
+00:01:19,047 --> 00:01:23,986
+The original files are stored unchanged inside the project.
+
+18
+00:01:26,686 --> 00:01:28,289
+Geometry shows the line:
+
+19
+00:01:28,289 --> 00:01:31,361
+geophones, shot points and the ground profile.
+
+20
+00:01:31,361 --> 00:01:36,503
+Positions and elevations recorded in the file headers are used automatically.
+
+21
+00:01:36,503 --> 00:01:43,513
+You can edit the spread, the channel roles and the shots, or paste a surveyed ground profile.
+
+22
+00:01:43,813 --> 00:01:46,386
+The Waveforms page shows each shot gather.
+
+23
+00:01:46,386 --> 00:01:52,878
+Hover over a trace for its details, zoom with the mouse wheel, and step through the shots with the arrows.
+
+24
+00:01:52,878 --> 00:01:57,946
+The amplitude spectrum helps you choose filters.
+
+25
+00:01:58,246 --> 00:02:04,036
+Processing is a list of steps applied to copies of the traces; the raw data never change.
+
+26
+00:02:04,036 --> 00:02:10,477
+Remove the DC offset and, if surface waves obscure the first breaks, add a causal high-pass filter.
+
+27
+00:02:10,477 --> 00:02:14,660
+Every step can be reordered, switched off or undone.
+
+28
+00:02:17,360 --> 00:02:20,324
+On the P picks page, press Pick automatically.
+
+29
+00:02:20,324 --> 00:02:28,660
+Refraction Studio picks the first arrival on every trace and gives each pick a confidence, with its reasons.
+
+30
+00:02:28,960 --> 00:02:32,412
+Accept the high-confidence picks, then review the rest.
+
+31
+00:02:32,412 --> 00:02:38,311
+Click a trace to place or move a pick, nudge it with the arrow keys and press Enter to accept.
+
+32
+00:02:38,311 --> 00:02:44,195
+Manual picks are never overwritten, and the travel-time plot updates as you work.
+
+33
+00:02:46,895 --> 00:02:52,657
+On the Velocity model page, choose the number of layers and press Suggest layer assignment.
+
+34
+00:02:52,657 --> 00:02:57,659
+Check the crossovers on the travel-time plot, then apply the delay-time method.
+
+35
+00:02:57,659 --> 00:03:04,795
+The layered model gives each layer's velocity and the depth to the refractor under every geophone.
+
+36
+00:03:05,095 --> 00:03:07,658
+For a gradational model, run tomography.
+
+37
+00:03:07,658 --> 00:03:11,824
+The inversion stops when the misfit matches the pick uncertainty.
+
+38
+00:03:11,824 --> 00:03:18,456
+Cells below the depth of investigation are hatched, because the data do not constrain them.
+
+39
+00:03:21,156 --> 00:03:25,896
+Quality control checks the picks, the timing, the geometry and the models.
+
+40
+00:03:25,896 --> 00:03:31,662
+Each finding explains what was found and what to check; double-click it to open the trace.
+
+41
+00:03:31,662 --> 00:03:36,305
+The summary is an aid to review, not a compliance statement.
+
+42
+00:03:36,605 --> 00:03:38,526
+Save the project with Ctrl+S.
+
+43
+00:03:38,526 --> 00:03:49,458
+The project file holds the raw data, every processing step and pick, and the complete history, so the analysis can be reproduced and every change undone.
+
+44
+00:03:52,158 --> 00:03:55,472
+The built-in sample has a P line and an SH line.
+
+45
+00:03:55,472 --> 00:04:00,996
+SH shots are recorded with a shear beam struck from the left and from the right.
+
+46
+00:04:00,996 --> 00:04:11,118
+Refraction Studio combines each pair so that shear energy adds and P energy cancels, and picks the SH arrivals with a dedicated picker.
+
+47
+00:04:11,418 --> 00:04:15,387
+Engineering combines the shear-wave and P-wave models:
+
+48
+00:04:15,387 --> 00:04:22,223
+Vs30, average velocities over chosen depth intervals, Poisson's ratio and the elastic moduli.
+
+49
+00:04:22,223 --> 00:04:31,770
+Vs30 is reported only where the model reaches 30 m unless you choose to extrapolate, and estimates are always labelled.
+
+50
+00:04:32,070 --> 00:04:37,021
+Results summarises every line and compares analysis scenarios.
+
+51
+00:04:37,021 --> 00:04:47,722
+Export the tables to Excel or CSV, the figures as PNG, SVG or PDF, and an audit record of the methods, settings and history.
+
+52
+00:04:50,422 --> 00:04:58,106
+On the Report page, enter the report details and conclusions, choose the sections and add your company branding.
+
+53
+00:04:58,106 --> 00:05:07,522
+Generate PDF report writes the complete technical report.
+
+54
+00:05:07,822 --> 00:05:20,859
+The report covers the project and the survey configuration, shot gathers, travel-time curves, the layered and tomographic models, Vs30, the engineering parameters, quality control and processing notes,
+
+55
+00:05:20,859 --> 00:05:25,486
+with the software version and settings for reproducibility.
+
+56
+00:05:28,186 --> 00:05:30,136
+Help is always one key away.
+
+57
+00:05:30,136 --> 00:05:36,751
+Press Ctrl+K to find any command, F1 for help on the current page, or choose Explain this step.
+
+58
+00:05:36,751 --> 00:05:45,419
+Guided mode shows a short guidance box on each page; Expert mode hides it.
+
+59
+00:05:45,719 --> 00:05:47,874
+That is the complete workflow.
+
+60
+00:05:47,874 --> 00:05:57,008
+Read the field guide before your first survey, and contact QuakeLogic support at any time at support@quakelogic.net.

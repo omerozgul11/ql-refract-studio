@@ -94,6 +94,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 
         workspace.ProjectChanged += (_, _) =>
         {
+            if (_session is not null) _session.GestureEnded -= OnGestureEnded;
+            _session = workspace.Session;
+            if (_session is not null) _session.GestureEnded += OnGestureEnded;
             HasProject = workspace.Session is not null;
             foreach (var p in _pages) p.OnProjectChanged();
             RefreshTitle();
@@ -132,6 +135,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 
     public BusyService Busy { get; }
     public LicenseService License { get; }
+
+    /// <summary>Shows the licence button in the header (hidden in the full version).</summary>
+    public bool ShowLicenseButton => License.IsEnforced;
     public StartPageViewModel Start { get; }
     public ProjectPageViewModel Project { get; }
     public ImportPageViewModel Import { get; }
@@ -223,10 +229,15 @@ public sealed partial class MainWindowViewModel : ViewModelBase
             _ => "Not activated",
         };
         LicenseDetail = s.LastVerifiedText(DateTimeOffset.UtcNow) is { } v && s.State is LicenseState.Licensed or LicenseState.LicenseOfflineGrace ? $"{s.Message} {v}" : s.Message;
-        ShowLicenseBanner = s.State is not (LicenseState.Licensed or LicenseState.TrialActive);
+        ShowLicenseBanner = License.IsEnforced && s.State is not (LicenseState.Licensed or LicenseState.TrialActive);
         LicenseBannerIsWarning = s.State is not (LicenseState.TrialActive or LicenseState.Licensed or LicenseState.LicenseOfflineGrace);
-        if (s.State == LicenseState.TrialActive) ShowLicenseBanner = true;
+        if (License.IsEnforced && s.State == LicenseState.TrialActive) ShowLicenseBanner = true;
     }
+
+    private Core.Session.ProjectSession? _session;
+
+    // Undo becomes available only when a gesture ends (after its last state change).
+    private void OnGestureEnded(object? sender, EventArgs e) => Avalonia.Threading.Dispatcher.UIThread.Post(RefreshCommands);
 
     private void RefreshCommands()
     {
@@ -259,20 +270,26 @@ public sealed partial class MainWindowViewModel : ViewModelBase
                 MessageKind.Question, "Recover", "Discard", "Later");
             if (choice == 0)
             {
-                await RunGuardedAsync("Recovering project", () =>
+                var recovered = await RunGuardedAsync("Recovering project", () =>
                 {
                     _ctx.Workspace.Recover(info);
                     StatusMessage = "Project recovered. Save it to keep the changes.";
                     return Task.CompletedTask;
                 });
-                break;
+                if (recovered) break;
+                // A checkpoint that cannot be restored (e.g. its project file or raw data were moved) would
+                // otherwise be offered again at every start.
+                var discard = await _ctx.Dialogs.AskAsync("Recover unsaved project",
+                    $"“{info.ProjectName}” cannot be recovered. Discard its recovery checkpoint?", MessageKind.Question, "Discard", "Keep");
+                if (discard == 0) _ctx.Workspace.Recovery.Discard(info.SessionId);
+                continue;
             }
             if (choice == 1) _ctx.Workspace.Recovery.Discard(info.SessionId);
         }
         if (_ctx.Workspace.Session is null && args.FirstOrDefault(a => a.EndsWith(ProjectContainer.Extension, StringComparison.OrdinalIgnoreCase)) is { } file && File.Exists(file))
             await OpenPathAsync(file);
-        if (License.Status.State == LicenseState.NotActivated) IsLicenseOpen = true;
-        else _ = RefreshLicenseOnlineAsync();
+        if (License.IsEnforced && License.Status.State == LicenseState.NotActivated) IsLicenseOpen = true;
+        else if (License.IsEnforced) _ = RefreshLicenseOnlineAsync();
         // NotifyOnly: report an available update (start page and status bar); Automatic: also offer to
         // download and install it (the user confirms). Manual: only when asked.
         if (_ctx.Settings.Current.Updates != UpdateMode.Manual) _ = Start.CheckForUpdatesAsync(silent: _ctx.Settings.Current.Updates == UpdateMode.NotifyOnly);
@@ -503,7 +520,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         yield return new("Redo", "Edit", "Ctrl+Y", () => { Redo(); return Task.CompletedTask; });
         yield return new("Generate report", "Report", "Ctrl+R", () => { Report(); return Task.CompletedTask; });
         yield return new("Settings", "Application", null, () => { OpenSettings(); return Task.CompletedTask; });
-        yield return new("Licence", "Application", null, () => { OpenLicense(); return Task.CompletedTask; });
+        if (License.IsEnforced) yield return new("Licence", "Application", null, () => { OpenLicense(); return Task.CompletedTask; });
         yield return new("Help and user guide", "Help", "F1", () => { OpenHelp(); return Task.CompletedTask; });
         yield return new("Explore sample project", "Help", null, () => Start.OpenSampleCommand.ExecuteAsync(null));
         yield return new(IsExpert ? "Switch to Guided mode" : "Switch to Expert mode", "View", null, () => { IsExpert = !IsExpert; return Task.CompletedTask; });
@@ -515,8 +532,21 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     private void FillPalette()
     {
         PaletteResults.Clear();
-        var terms = PaletteQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        foreach (var c in AllCommands().Where(c => terms.All(t => c.Title.Contains(t, StringComparison.OrdinalIgnoreCase) || c.Category.Contains(t, StringComparison.OrdinalIgnoreCase))).Take(14))
+        var query = PaletteQuery.Trim();
+        var terms = query.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Every term must match; the exact title, then titles starting with or containing the whole query,
+        // then titles with every term as a word prefix, rank first ("Go to S picks" before "Go to P picks").
+        int Rank(PaletteCommand c)
+        {
+            if (c.Title.Equals(query, StringComparison.OrdinalIgnoreCase)) return 0;
+            if (c.Title.StartsWith(query, StringComparison.OrdinalIgnoreCase)) return 1;
+            if (c.Title.Contains(query, StringComparison.OrdinalIgnoreCase)) return 2;
+            var words = c.Title.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return terms.All(t => words.Any(w => w.StartsWith(t, StringComparison.OrdinalIgnoreCase))) ? 3 : 4;
+        }
+        foreach (var c in AllCommands()
+                     .Where(c => terms.All(t => c.Title.Contains(t, StringComparison.OrdinalIgnoreCase) || c.Category.Contains(t, StringComparison.OrdinalIgnoreCase)))
+                     .OrderBy(Rank).Take(14))
             PaletteResults.Add(c);
         SelectedPaletteCommand = PaletteResults.FirstOrDefault();
     }

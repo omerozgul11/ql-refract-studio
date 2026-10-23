@@ -52,6 +52,18 @@ public sealed class WorkspaceTests : IDisposable
     }
 
     [Fact]
+    public async Task Files_already_in_the_project_are_flagged_and_not_importable_again()
+    {
+        var (ws, _, _) = await ImportedAsync();
+        var files = Directory.GetFiles(Path.Combine(_dir, "data-P"));
+        var (inspected, issues, _) = await ws.InspectAsync(files);
+        var flagged = issues.Where(i => i.Code == "already-imported").ToList();
+        Assert.Equal(files.Length, flagged.Count);
+        Assert.All(flagged, i => Assert.Null(i.Fix));
+        Assert.Empty(ImportService.Importable(ws.State, inspected, new HashSet<string>()));
+    }
+
+    [Fact]
     public async Task Sh_records_are_paired_as_opposite_impacts_and_the_difference_cancels_p()
     {
         var (ws, lineId, _) = await ImportedAsync(WaveType.SH);

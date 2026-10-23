@@ -48,12 +48,18 @@ public sealed record ImportPlan(ProjectEdit Edit, IReadOnlyList<(SourceFile File
 /// <summary>Turns validated, decoded files into project records, spreads and gathers.</summary>
 public static class ImportService
 {
+    /// <summary>The readable files that would be imported: not skipped, not already in the project, one per identical file.</summary>
+    public static List<InspectedFile> Importable(ProjectState state, IReadOnlyList<InspectedFile> files, IReadOnlySet<string> skipFiles)
+    {
+        var existingHashes = state.Survey.SourceFiles.Select(f => f.Sha256).ToHashSet();
+        return files.Where(f => f.Decoded is not null && !skipFiles.Contains(f.FileName) && !existingHashes.Contains(f.Sha256))
+            .GroupBy(f => f.Sha256).Select(g => g.First()).ToList();
+    }
+
     public static ImportPlan Plan(ProjectState state, IReadOnlyList<InspectedFile> files, ImportOptions options, DateTimeOffset now)
     {
         var notes = ImmutableArray.CreateBuilder<string>();
-        var existingHashes = state.Survey.SourceFiles.Select(f => f.Sha256).ToHashSet();
-        var accepted = files.Where(f => f.Decoded is not null && !options.SkipFiles.Contains(f.FileName) && !existingHashes.Contains(f.Sha256))
-            .GroupBy(f => f.Sha256).Select(g => g.First()).ToList();
+        var accepted = Importable(state, files, options.SkipFiles);
         if (accepted.Count == 0) throw new InvalidOperationException("No files remain to import.");
 
         var sourceFiles = new List<SourceFile>();

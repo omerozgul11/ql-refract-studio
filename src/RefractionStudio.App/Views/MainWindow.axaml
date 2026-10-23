@@ -86,7 +86,7 @@
                 <Button Classes="segment" Content="Expert" Command="{Binding SetModeCommand}" CommandParameter="expert" Classes.selected="{Binding IsExpert}" />
               </StackPanel>
             </Border>
-            <Button Classes="header" Command="{Binding OpenLicenseCommand}" ToolTip.Tip="{Binding LicenseDetail}">
+            <Button Classes="header" Command="{Binding OpenLicenseCommand}" ToolTip.Tip="{Binding LicenseDetail}" IsVisible="{Binding ShowLicenseButton}">
               <StackPanel Spacing="3"><PathIcon Data="{StaticResource Icon.License}" /><TextBlock Text="{Binding LicenseShort}" MaxWidth="120" TextTrimming="CharacterEllipsis" /></StackPanel>
             </Button>
             <Button Classes="header" Command="{Binding OpenSettingsCommand}" ToolTip.Tip="Settings">

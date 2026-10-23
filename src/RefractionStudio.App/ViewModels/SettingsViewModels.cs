@@ -12,7 +12,14 @@ namespace RefractionStudio.App.ViewModels;
 /// <summary>Application settings (sections: General, Appearance, Units, Processing and picking defaults, Reporting, License, Updates, Advanced).</summary>
 public sealed partial class SettingsViewModel(StudioContext ctx, UpdateService updates) : ViewModelBase
 {
-    public IReadOnlyList<string> Sections { get; } = ["General", "Appearance", "Units", "Processing and picking", "Reporting", "License", "Updates", "Advanced"];
+    public IReadOnlyList<string> Sections { get; } = ctx.License.IsEnforced
+        ? ["General", "Appearance", "Units", "Processing and picking", "Reporting", "License", "Updates", "Advanced"]
+        : ["General", "Appearance", "Units", "Processing and picking", "Reporting", "Updates", "Advanced"];
+
+    /// <summary>What the application sends over the network (Advanced section).</summary>
+    public string PrivacyNote => ctx.License.IsEnforced
+        ? "Refraction Studio sends no usage statistics. It contacts QuakeLogic only for licence activation and checks, and for update checks."
+        : "Refraction Studio sends no usage statistics. It contacts QuakeLogic only to check for updates.";
     public IReadOnlyList<ThemePreference> Themes { get; } = Enum.GetValues<ThemePreference>();
     public IReadOnlyList<UnitSystem> UnitSystems { get; } = Enum.GetValues<UnitSystem>();
     public IReadOnlyList<ModulusDisplayUnit> ModulusUnits { get; } = Enum.GetValues<ModulusDisplayUnit>();

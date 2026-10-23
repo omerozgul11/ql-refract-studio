@@ -14,7 +14,7 @@ using the sample project that ships with the application.
 
 | Area | Purpose |
 |---|---|
-| **Header** (top, dark band) | Left: the QuakeLogic logo and product name (click to return to the start page), then New, Open, Save, Undo, Redo, Import, Export (opens the Results page with the export buttons) and Report (opens the Report page). Right: **Search commands** (the command palette), the **Guided / Expert** selector, the licence status (opens the licence panel), Settings and Help. |
+| **Header** (top, dark band) | Left: the QuakeLogic logo and product name (click to return to the start page), then New, Open, Save, Undo, Redo, Import, Export (opens the Results page with the export buttons) and Report (opens the Report page). Right: **Search commands** (the command palette), the **Guided / Expert** selector, Settings and Help. |
 | **Sidebar** (left) | The project name and its save status, then the workflow: the steps of an interpretation. Each step shows its status: ✓ complete, ● in progress, ! needs attention, ○ not started. Click any step at any time; nothing is enforced. |
 | **Workspace** (centre) | Plots, tables and settings of the current step. |
 | **Trace inspector** (right, Waveforms and Picks pages) | Properties of the selected trace (display gain, polarity, exclusion, static time shift, note) and its pick (accept, delete, use / exclude, restore the automatic suggestion, propagate to neighbours). The command palette entry *Toggle inspector panel* hides or shows it. |
@@ -25,7 +25,7 @@ time, pick and QC findings.
 
 **Command palette — Ctrl+K** (or **Search commands** in the header). Type part of a command name and press
 Enter. The palette lists the file and edit commands (New, Open, Save, Save as, Import, Undo, Redo),
-*Generate report* (opens the Report page), Settings, Licence, Help, *Explore sample project*, the
+*Generate report* (opens the Report page), Settings, Help, *Explore sample project*, the
 Guided / Expert switch, *Toggle inspector panel*, *Go to* any workflow page, and every help topic
 (*Help: …*). It shows up to 14 matches. Settings and exports are not listed; use Settings and the
 Results page.
@@ -44,7 +44,7 @@ is the same in both.
 | Ctrl+R | Open the Report page |
 | Ctrl+K | Command palette |
 | F1 | Help for the current page |
-| Esc | Close the palette, help, settings or licence panel |
+| Esc | Close the palette, help or settings |
 
 In a shot-gather plot (click the plot first so that it has the keyboard focus):
 
@@ -320,18 +320,13 @@ display units.
 
 ## 12. Licence
 
-The licence panel opens from the licence button in the header (or Settings → License → **Open the
-licence panel**). It shows the edition, status, licensed-to, device, key hint, expiry, update
-entitlement and last verification, with **Check now**, **Copy licence information** and **Deactivate
-this computer…**. The device is shown by name only if you allowed sending the computer's name
-(Settings → License); otherwise it reads "This computer".
+Refraction Studio 1.0 is the full version on every installation: every feature is available, with no
+trial, no licence key and no activation, and no internet connection is needed. The only network
+access is the optional update check (Settings → Updates), which downloads a signed release manifest
+from the public Refraction Studio GitHub repository.
 
-* A 14-day trial with all features starts when you press **Start 14-day trial**; a licence key is
-  entered under **Activate a licence**. Activation needs an internet connection once.
-* Licences work offline between online verifications for the period set for the licence (30 days by
-  default). Trials must be verified online at least every 3 days.
-* If the licence cannot be verified, projects can still be opened, viewed and exported; editing
-  resumes after verification. Licence problems never modify or delete project data.
+Use of the software is governed by the end-user licence agreement shown by the installer (also in the
+client package under *Licence and notices*).
 
 ---
 

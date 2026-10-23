@@ -311,6 +311,11 @@
   <Style Selector="ListBox.nav">
     <Setter Property="Background" Value="Transparent" />
   </Style>
+  <!-- Selected rows in lists (scenarios, command palette): neutral fill; orange stays an accent. -->
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource HoverBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+  </Style>
   <Style Selector="ListBox.nav ListBoxItem">
     <Setter Property="Padding" Value="10,7" />
     <Setter Property="Margin" Value="8,1" />

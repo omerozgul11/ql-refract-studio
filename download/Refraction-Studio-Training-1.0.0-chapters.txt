@@ -1,0 +1,10 @@
+00:00 Introduction
+00:13 Getting started
+00:32 Project and import
+01:23 Geometry and processing
+02:14 First-arrival picking
+02:44 Velocity model
+03:18 Quality control and saving
+03:49 SH lines and engineering results
+04:47 Report
+05:25 Help

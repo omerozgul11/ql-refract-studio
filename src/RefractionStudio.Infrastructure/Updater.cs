@@ -22,13 +22,18 @@ public sealed record UpdateCheck(bool Available, ReleaseInfo? Release, string Me
 /// verified after download, and on Windows the installer's Authenticode signature is checked before it
 /// is started. Nothing is installed without the user's confirmation.
 /// </summary>
-public sealed class UpdateService(HttpClient http, AppPaths paths, IReadOnlyCollection<string> trustedReleaseKeys, ILogger<UpdateService> log)
+/// <param name="staticFeed">True: <paramref name="http"/>'s base address holds static signed manifests named
+/// release-&lt;channel&gt;.json (the repository's download folder) instead of the licence server's update API.</param>
+public sealed class UpdateService(HttpClient http, AppPaths paths, IReadOnlyCollection<string> trustedReleaseKeys, ILogger<UpdateService> log, bool staticFeed = false)
 {
     public async Task<UpdateCheck> CheckAsync(string channel, string currentVersion, CancellationToken ct = default)
     {
         try
         {
-            using var response = await http.GetAsync($"api/updates/{AppInfo.ProductCode}/{Uri.EscapeDataString(channel)}?current={Uri.EscapeDataString(currentVersion)}", ct).ConfigureAwait(false);
+            var path = staticFeed
+                ? $"release-{Uri.EscapeDataString(channel)}.json"
+                : $"api/updates/{AppInfo.ProductCode}/{Uri.EscapeDataString(channel)}?current={Uri.EscapeDataString(currentVersion)}";
+            using var response = await http.GetAsync(path, ct).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent) return new UpdateCheck(false, null, "Refraction Studio is up to date.");
             if (!response.IsSuccessStatusCode) return new UpdateCheck(false, null, $"The update service is unavailable ({(int)response.StatusCode}).");
             var manifest = await response.Content.ReadFromJsonAsync<SignedManifest>(LicenseJson.Options, ct).ConfigureAwait(false);

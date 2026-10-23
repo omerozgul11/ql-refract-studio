@@ -41,9 +41,11 @@ public static class Composition
         services.AddSingleton(sp => LicenseService.Create(paths, settingsService, sp.GetRequiredService<ILogger<LicenseManager>>()));
         services.AddSingleton(sp =>
         {
-            var http = new HttpClient { BaseAddress = new Uri(settingsService.Current.LicenseServer), Timeout = TimeSpan.FromMinutes(10) };
+            // Without the licence server (full version), updates come from the signed manifests on GitHub releases.
+            var feed = AppInfo.LicensingEnforced ? settingsService.Current.LicenseServer : AppInfo.ReleaseFeedUrl;
+            var http = new HttpClient { BaseAddress = new Uri(feed), Timeout = TimeSpan.FromMinutes(10) };
             http.DefaultRequestHeaders.UserAgent.ParseAdd($"RefractionStudio/{AppInfo.Version}");
-            return new UpdateService(http, paths, AppInfo.ReleasePublicKeys, sp.GetRequiredService<ILogger<UpdateService>>());
+            return new UpdateService(http, paths, AppInfo.ReleasePublicKeys, sp.GetRequiredService<ILogger<UpdateService>>(), staticFeed: !AppInfo.LicensingEnforced);
         });
         services.AddSingleton(sp => new CrashHandler(paths, () => sp.GetRequiredService<ProjectWorkspace>().Checkpoint(), sp.GetRequiredService<ILogger<CrashHandler>>()));
         services.AddSingleton<AutosaveService>();
@@ -277,12 +279,21 @@ public sealed class AutosaveService
 /// <summary>Licence status for the user interface.</summary>
 public sealed partial class LicenseService : ObservableObject
 {
-    public LicenseService(LicenseManager manager)
+    /// <param name="enforced">False: full version; <see cref="Status"/> always permits editing and the licence is never checked.</param>
+    public LicenseService(LicenseManager manager, bool enforced = true)
     {
         Manager = manager;
-        Status = Manager.Evaluate();
-        Manager.StatusChanged += (_, s) => Dispatcher.UIThread.Post(() => Status = s);
+        IsEnforced = enforced;
+        Status = enforced ? Manager.Evaluate() : FullVersion;
+        if (enforced) Manager.StatusChanged += (_, s) => Dispatcher.UIThread.Post(() => Status = s);
     }
+
+    /// <summary>Status of an installation when licensing is not enforced.</summary>
+    public static LicenseStatus FullVersion { get; } = new(LicenseState.Licensed, null, $"{AppInfo.ProductName} (full version)",
+        "Full version: every feature is available.", null, null, CanEdit: true);
+
+    /// <summary>True when a trial or licence is required to edit (see <see cref="AppInfo.LicensingEnforced"/>).</summary>
+    public bool IsEnforced { get; }
 
     /// <summary>Creates the licence service for this computer with the production licence server and keys.</summary>
     public static LicenseService Create(AppPaths paths, SettingsService settings, ILogger<LicenseManager> log)
@@ -302,12 +313,12 @@ public sealed partial class LicenseService : ObservableObject
         var http = new HttpClient { BaseAddress = new Uri(settings.Current.LicenseServer), Timeout = TimeSpan.FromSeconds(20) };
         http.DefaultRequestHeaders.UserAgent.ParseAdd($"RefractionStudio/{AppInfo.Version}");
         return new LicenseService(new LicenseManager(new LicensingOptions(AppInfo.ProductCode, AppInfo.ProductName, AppInfo.Version, AppInfo.LicensePublicKeys),
-            new HttpLicenseApi(http), new FileLicenseStore(paths.License, device.Fingerprint), device, logger: log));
+            new HttpLicenseApi(http), new FileLicenseStore(paths.License, device.Fingerprint), device, logger: log), AppInfo.LicensingEnforced);
     }
 
     public LicenseManager Manager { get; }
 
     [ObservableProperty] public partial LicenseStatus Status { get; private set; }
 
-    public void Reevaluate() => Status = Manager.Evaluate();
+    public void Reevaluate() => Status = IsEnforced ? Manager.Evaluate() : FullVersion;
 }
