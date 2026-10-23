@@ -267,6 +267,8 @@ licensing client, server and tests stay in place for when the licence server is 
 **Test in a web browser:** `testenv/start.sh` runs the Linux build of the application in Docker and
 prints the addresses: the application through noVNC on port 50020 and a file browser for test data,
 reports and exports on port 50021 (both on 127.0.0.1; use an SSH tunnel from another computer).
+`testenv/start.sh --public` also opens two Cloudflare quick tunnels with HTTPS addresses that work
+from any network (password-protected; the passwords are in the git-ignored `testenv/.env`).
 `testenv/stop.sh` stops it.
 
 ### Full documentation index
